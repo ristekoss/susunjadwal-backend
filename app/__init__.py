@@ -12,7 +12,6 @@ app = Flask(__name__, instance_relative_config=True)
 # config vars
 app.config["BASE_PATH"] = "/susunjadwal/api"
 app.config["SSO_UI_URL"] = "https://sso.ui.ac.id/cas2/"
-app.config["SSO_UI_FORCE_SERVICE_HTTPS"] = False
 app.config["SECRET_KEY"] = "password"
 app.config["ACTIVE_PERIOD"] = "2018-2"
 

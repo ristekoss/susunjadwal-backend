@@ -1,8 +1,6 @@
 from flask import (
     Blueprint,
-    current_app as app,
     jsonify,
-    render_template,
     request
 )
 
@@ -12,10 +10,10 @@ from sso.utils import (
     process_sso_profile
 )
 
-router_sso = Blueprint('router_sso', __name__, template_folder="templates")
+router_auth = Blueprint('router_auth', __name__, template_folder="templates")
 
 
-@router_sso.route("/auth/", methods=['POST'])
+@router_auth.route("/auth/", methods=['POST'])
 def auth():
     data = request.json
     ticket = data.get("ticket")

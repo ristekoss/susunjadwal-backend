@@ -4,7 +4,8 @@ from flask_cors import CORS
 from flask_mongoengine import MongoEngine
 
 from app.views import router_main
-from sso.views import router_sso
+from app.cron import cron
+from sso.views import router_auth
 
 
 app = Flask(__name__, instance_relative_config=True)
@@ -16,8 +17,9 @@ app.config["SECRET_KEY"] = "password"
 app.config["ACTIVE_PERIOD"] = "2018-2"
 
 app.config.from_pyfile("config.cfg")
-app.register_blueprint(router_sso, url_prefix=app.config["BASE_PATH"])
+app.register_blueprint(router_auth, url_prefix=app.config["BASE_PATH"])
 app.register_blueprint(router_main, url_prefix=app.config["BASE_PATH"])
+app.register_blueprint(cron)
 
 CORS(app)
 MongoEngine(app)

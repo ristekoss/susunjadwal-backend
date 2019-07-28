@@ -1,4 +1,4 @@
-Flask==1.0.3
+Flask==1.1.1
 Flask-Cors==3.0.8
 PyJWT==1.7.1
 beautifulsoup4==4.7.1

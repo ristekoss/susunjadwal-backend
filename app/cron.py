@@ -24,7 +24,7 @@ def update_courses():
                 major_id=major.id, name=period_name, is_detail=False).first()
 
             if period_not_detail is None:
-                return
+                continue
 
             courses, is_detail = scrape_courses(major_kd_org, period_name)
             if courses:
@@ -39,7 +39,7 @@ def update_courses():
                 else:
                     period_not_detail.courses = courses
                     period_not_detail.save()
-            return
+            continue
 
         courses, is_detail = scrape_courses(
             major_kd_org, period_name, skip_not_detail=True)

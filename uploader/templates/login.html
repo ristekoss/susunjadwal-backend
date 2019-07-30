@@ -2,8 +2,17 @@
 
 <title>Susun Jadwal Uploader</title>
 <h1>Susun Jadwal Uploader</h1>
+{% with messages = get_flashed_messages() %} {% if messages %}
+<p>{{ messages[0] }}</p>
+<button
+  onclick="window.location.href='{{ url_for('router_uploader.logout') }}';"
+>
+  Logout
+</button>
+{% else %}
 <button
   onclick="window.location.href='{{ url_for('router_uploader.upload') }}';"
 >
   Login
 </button>
+{% endif %} {% endwith %}

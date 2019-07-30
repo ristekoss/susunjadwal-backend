@@ -2,9 +2,10 @@
 
 <title>Susun Jadwal Uploader</title>
 <h1>Unggah Jadwal</h1>
-{% if info %}
-<p> {{ info }} </p>
-{% endif %}
+{% with messages = get_flashed_messages() %} {% if messages %}
+<p>{{ messages[0] }}</p>
+{% endif %} {% endwith %}
+<p> Halo {{ profile.username }} [{{profile.kd_org}}]</p>
 <form method=post enctype=multipart/form-data>
   <input type=file name=file>
   <input type=submit value=Upload>

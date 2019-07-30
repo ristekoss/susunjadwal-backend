@@ -65,6 +65,25 @@ def parse_kd_org(kd_org):
     return kd_org[-5:], kd_org
 
 
+def get_period_and_kd_org(html):
+    try:
+        soup = BeautifulSoup(html, 'html.parser')
+
+        item = soup.find(class_="linfo", style="border-left:0")
+        m = re.search(r"\((\d\d.\d\d.\d\d.\d\d)\)", item.text)
+        kd_org = m[1]
+
+        item = soup.find('option', selected=True)
+        period = item["value"]
+
+        return period, kd_org
+
+    except:
+        pass
+
+    return None, None
+
+
 def create_courses(html, is_detail=False):
     soup = BeautifulSoup(html, 'html.parser')
     if is_detail:

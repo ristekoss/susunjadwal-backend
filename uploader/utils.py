@@ -1,7 +1,8 @@
-import functools
+import os
+import json
+
 from flask import (
     redirect,
-    request,
     url_for
 )
 
@@ -28,21 +29,16 @@ def generate_token(sso_profile):
     token = encode_token({
         "username": sso_profile["username"],
         "npm": sso_profile["attributes"]["npm"],
-        "study_program": sso_profile["attributes"]["study_program"],
-        "educational_program": sso_profile["attributes"]["educational_program"]
+        "kd_org": sso_profile["attributes"]["kd_org"]
     })
     return token
 
 
-def require_jwt_cookie(func):
-    @functools.wraps(func)
-    def decorated_func(*args, **kwargs):
-        profile = decode_token(request.cookies.get("__token"))
-        if profile is None:
-            login_url = get_sso_login_url()
-            return redirect(login_url)
+def check_uploader(npm):
+    path = os.path.dirname(os.path.abspath(__file__))
+    filename = os.path.join(path, "whitelist.json")
 
-        kwargs["profile"] = profile
-        return func(*args, **kwargs)
+    with open(filename) as f:
+        as_json = json.loads(f.read())
 
-    return decorated_func
+    return as_json.get(npm)

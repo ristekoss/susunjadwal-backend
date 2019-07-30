@@ -17,6 +17,7 @@ app.config["SSO_UI_URL"] = "https://sso.ui.ac.id/cas2/"
 app.config["SECRET_KEY"] = "password"
 app.config["ACTIVE_PERIOD"] = "2018-2"
 app.config["SSO_UI_FORCE_HTTPS"] = False
+app.config["MAX_CONTENT_LENGTH"] = 2 * 1024 * 1024
 
 # uploader
 app.config['UPLOAD_FOLDER'] = "__files__"

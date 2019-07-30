@@ -18,6 +18,7 @@ from uploader.decorators import require_jwt_cookie
 from uploader.utils import (
     check_uploader,
     generate_token,
+    get_sso_login_url,
     get_sso_logout_url
 )
 from scraper.main import get_period_and_kd_org, create_courses
@@ -42,14 +43,13 @@ def login():
 @router_uploader.route("/__uploader/auth")
 def auth():
     ticket = request.args.get("ticket")
-    service_url = url_for("router_uploader.auth", _external=True)
+    service_url = get_sso_login_url()
 
     if (ticket is not None):
         client = get_cas_client(service_url)
         sso_profile = authenticate(ticket, client)
 
-        npm = sso_profile["attributes"]["npm"]
-        if (sso_profile is not None) and check_uploader(npm):
+        if (sso_profile is not None) and check_uploader(sso_profile["attributes"]["npm"]):
             token = generate_token(sso_profile)
             r = make_response(redirect(url_for("router_uploader.upload")))
             r.set_cookie("__token", token)

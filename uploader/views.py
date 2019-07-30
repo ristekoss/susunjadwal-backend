@@ -18,7 +18,7 @@ from uploader.decorators import require_jwt_cookie
 from uploader.utils import (
     check_uploader,
     generate_token,
-    get_sso_logout_url,
+    get_sso_logout_url
 )
 from scraper.main import get_period_and_kd_org, create_courses
 from sso.utils import authenticate, get_cas_client

@@ -16,6 +16,7 @@ app.config["BASE_PATH"] = "/susunjadwal/api"
 app.config["SSO_UI_URL"] = "https://sso.ui.ac.id/cas2/"
 app.config["SECRET_KEY"] = "password"
 app.config["ACTIVE_PERIOD"] = "2018-2"
+app.config["SSO_UI_FORCE_HTTPS"] = False
 
 # uploader
 app.config['UPLOAD_FOLDER'] = "__files__"

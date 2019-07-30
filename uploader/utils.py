@@ -2,7 +2,9 @@ import os
 import json
 
 from flask import (
+    current_app as app,
     redirect,
+    request,
     url_for
 )
 
@@ -10,15 +12,27 @@ from app.jwt_utils import decode_token, encode_token
 from sso.utils import get_cas_client
 
 
+def get_scheme():
+    if request.is_secure or app.config["SSO_UI_FORCE_HTTPS"]:
+        return "https"
+
+    return "http"
+
+
+def url_for_custom(*args, **kwargs):
+    scheme = get_scheme()
+    return url_for(*args, **kwargs, _scheme=scheme)
+
+
 def get_sso_login_url():
-    service_url = url_for("router_uploader.auth", _external=True)
+    service_url = url_for_custom("router_uploader.auth", _external=True)
     client = get_cas_client(service_url=service_url)
     login_url = client.get_login_url()
     return login_url
 
 
 def get_sso_logout_url():
-    redirect_url = url_for("router_uploader.login", _external=True)
+    redirect_url = url_for_custom("router_uploader.login", _external=True)
     client = get_cas_client()
     logout_url = client.get_logout_url(redirect_url=redirect_url)
 

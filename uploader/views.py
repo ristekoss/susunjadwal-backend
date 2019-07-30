@@ -7,8 +7,7 @@ from flask import (
     make_response,
     redirect,
     render_template,
-    request,
-    url_for
+    request
 )
 from werkzeug.utils import secure_filename
 
@@ -44,7 +43,7 @@ def login():
 @router_uploader.route("/__uploader/auth")
 def auth():
     ticket = request.args.get("ticket")
-    service_url = url_for_custom("router_uploader.auth", _external=True)
+    service_url = url_for_custom("router_uploader.auth")
 
     if (ticket is not None):
         client = get_cas_client(service_url)
@@ -52,12 +51,13 @@ def auth():
 
         if (sso_profile is not None) and check_uploader(sso_profile["attributes"]["npm"]):
             token = generate_token(sso_profile)
-            r = make_response(redirect(url_for("router_uploader.upload")))
+            r = make_response(
+                redirect(url_for_custom("router_uploader.upload")))
             r.set_cookie("__token", token)
             return r
 
     flash("Apa yang kamu lakukan di sini?")
-    return redirect(url_for("router_uploader.login"))
+    return redirect(url_for_custom("router_uploader.login"))
 
 
 @router_uploader.route("/__uploader/logout")
@@ -74,13 +74,13 @@ def upload(profile):
     if request.method == "POST":
         if "file" not in request.files:
             flash("File error.")
-            return redirect(request.url)
+            return redirect(url_for_custom("router_uploader.upload"))
 
         file_ = request.files["file"]
 
         if file_.filename == "":
             flash("File kosong.")
-            return redirect(request.url)
+            return redirect(url_for_custom("router_uploader.upload"))
 
         if file_ and allowed_file(file_.filename):
 
@@ -95,12 +95,12 @@ def upload(profile):
                 courses = create_courses(html, is_detail=True)
                 if not courses:
                     flash("Error, hubungi admin. Sertakan file ini.")
-                    return redirect(request.url)
+                    return redirect(url_for_custom("router_uploader.upload"))
 
                 major = Major.objects(kd_org=kd_org).first()
                 if major is None:
                     flash("Login susun jadwal beneran dulu ya.")
-                    return redirect(request.url)
+                    return redirect(url_for_custom("router_uploader.upload"))
 
                 instance = Period.objects(
                     major_id=major.id,
@@ -125,12 +125,12 @@ def upload(profile):
 
             else:
                 flash("Periode salah atau jurusan tidak sesuai.")
-                return redirect(request.url)
+                return redirect(url_for_custom("router_uploader.upload"))
 
             flash("Berhasil..!!")
-            return redirect(request.url)
+            return redirect(url_for_custom("router_uploader.upload"))
 
         flash("Gagal. File salah atau hubungi admin.")
-        return redirect(request.url)
+        return redirect(url_for_custom("router_uploader.upload"))
 
     return render_template("upload.html", profile=profile)

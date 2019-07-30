@@ -10,7 +10,7 @@ from sso.utils import (
     process_sso_profile
 )
 
-router_auth = Blueprint('router_auth', __name__, template_folder="templates")
+router_auth = Blueprint('router_auth', __name__)
 
 
 @router_auth.route("/auth/", methods=['POST'])

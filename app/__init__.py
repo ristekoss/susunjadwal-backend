@@ -3,9 +3,9 @@ from flask import Flask
 from flask_cors import CORS
 from flask_mongoengine import MongoEngine
 
-from app.views import router_main
+from app.views.auth import router_auth
+from app.views.main import router_main
 from app.cron import cron
-from sso.views import router_auth
 from uploader.views import router_uploader
 
 

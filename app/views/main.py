@@ -5,8 +5,7 @@ from flask import (
     request
 )
 
-from app.decorators import require_same_user_id
-from app.jwt_utils import require_jwt_token
+from app.decorators import require_jwt_token, require_same_user_id
 from models.period import Period
 from models.user_schedule import UserSchedule
 

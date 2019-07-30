@@ -4,10 +4,10 @@ from flask import (
     request
 )
 
+from app.utils import process_sso_profile
 from sso.utils import (
     authenticate,
     get_cas_client,
-    process_sso_profile
 )
 
 router_auth = Blueprint('router_auth', __name__)

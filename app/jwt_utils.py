@@ -7,20 +7,32 @@ from flask import current_app as app, request, jsonify
 EXPIRY_TIME = datetime.datetime.now() + datetime.timedelta(days=365)
 
 
+def encode_token(data):
+    return jwt.encode(data, app.config["SECRET_KEY"], algorithm='HS256').decode()
+
+
+def decode_token(token):
+    try:
+        data = jwt.decode(token, app.config["SECRET_KEY"], algorithm='HS256')
+    except:
+        return None
+
+    return data
+
+
 def generate_token(user_id, major_id):
-    token = jwt.encode({
+    token = encode_token({
         'exp': EXPIRY_TIME,
         'user_id': str(user_id),
         'major_id': str(major_id),
-    }, app.config["SECRET_KEY"], algorithm='HS256')
-
-    return token.decode()
+    })
+    return token
 
 
 def extract_data(header):
     try:
         header_type, value = header['Authorization'].split()
-        data = jwt.decode(value, app.config["SECRET_KEY"], algorithm='HS256')
+        data = decode_token(value)
     except:
         return None
 

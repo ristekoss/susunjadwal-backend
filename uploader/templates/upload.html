@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+
+<title>Susun Jadwal Uploader</title>
+<h1>Unggah Jadwal</h1>
+{% if info %}
+<p> {{ info }} </p>
+{% endif %}
+<form method=post enctype=multipart/form-data>
+  <input type=file name=file>
+  <input type=submit value=Upload>
+</form>
+<hr />
+<button onclick="window.location.href='{{ url_for('router_uploader.logout') }}';">Logout</button>

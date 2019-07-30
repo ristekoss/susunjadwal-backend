@@ -19,7 +19,8 @@ from uploader.utils import (
     check_uploader,
     generate_token,
     get_sso_login_url,
-    get_sso_logout_url
+    get_sso_logout_url,
+    url_for_custom
 )
 from scraper.main import get_period_and_kd_org, create_courses
 from sso.utils import authenticate, get_cas_client
@@ -43,7 +44,7 @@ def login():
 @router_uploader.route("/__uploader/auth")
 def auth():
     ticket = request.args.get("ticket")
-    service_url = get_sso_login_url()
+    service_url = url_for_custom("router_uploader.auth", _external=True)
 
     if (ticket is not None):
         client = get_cas_client(service_url)

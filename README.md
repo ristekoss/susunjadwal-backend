@@ -44,7 +44,20 @@ db.createUser(
 ```
 
 6. Run `./start.sh`
-7. Don't forget to provide `credentials.json` in scraper folder
+7. Don't forget to provide `credentials.json` in scraper folder. Structure:
+
+```
+{
+    "<kd_org>": {
+        "username": "<username>",
+        "password": "<password>"
+    }
+}
+```
+
+### Volunteer Dashboard
+
+Coming soon.
 
 ## License
 

@@ -83,6 +83,6 @@ def upload(profile):
             file_.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
             return render_template("upload.html", info="Berhasil..!!")
 
-        return render_template("upload.html", info="Gagal. Cek format file atau hubungi admin.")
+        return render_template("upload.html", info="Gagal. Cek file atau hubungi admin.")
 
     return render_template("upload.html")

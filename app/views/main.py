@@ -1,3 +1,4 @@
+import html
 from flask import (
     Blueprint,
     current_app as app,
@@ -84,7 +85,7 @@ def delete_user_schedule(user_id, user_schedule_id):
 def rename_user_schedule(user_id, user_schedule_id):
     data = request.json
     user_schedule = UserSchedule.objects(id=user_schedule_id).first()
-    user_schedule.name = data["name"]
+    user_schedule.name = html.escape(data["name"])
     user_schedule.save()
     return (jsonify({
         'user_schedule': user_schedule.serialize()

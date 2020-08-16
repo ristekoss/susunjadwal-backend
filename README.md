@@ -2,31 +2,33 @@
 
 ## Requirements
 
-1. Ensure `python` and `pip` are installed
-2. Create virtual environment using `python3 -m venv env`
-3. Activate virtualenv `source ./env/bin/activate`
-4. `pip install -r requirements.txt`
-5. Run `FLASK_ENV="development" flask run`
+1. `python` and `pip`
+2. `docker`
 
 ## Configuration
 
 ### Development
 
-MongoDB using docker:
-`docker run --rm -d -p 27017:27017 --name=test-mongo mongo`
+1. Create virtual environment using `python3 -m venv env`
+2. Activate virtualenv `source ./env/bin/activate`
+3. Install requirements `pip install -r requirements.txt`
+4. Add your credential to scrap schedule from SIAK in `scraper/credentials.json` with the following structure:
 
-Stop database:
-`docker stop test-name`
+```
+{
+    "<kd_org>": {
+        "username": "<username>",
+        "password": "<password>"
+    }
+}
+```
 
-By default, Flask access MongoDB on `localhost:27017` with database named `test`.
+You can also see `scraper/credentials.template.json` for example and `sso/additional-info.json` for list of `kd_org`.
 
-### Production
-
-1. Set database admin username and password at `start_db.sh`
-2. Run `./start_db.sh` to create docker container named `ristek-mongo`
-3. Run `docker exec -it ristek-mongo mongo -u <admin_username>` to execute `mongo`
-4. Create database: `use <db_name>`
-5. Create user for database:
+5. Start database using `bash start_db.sh`
+6. Go to mongo console by running `docker exec -it ristek-mongo mongo -u <admin_username>`
+7. Create database by running `use <db_name>`. By default, Flask use database named `test` so it becomes `use test`
+8. Create user for database:
 
 ```
 db.createUser(
@@ -43,21 +45,26 @@ db.createUser(
 );
 ```
 
-6. Run `./start.sh`
-7. Don't forget to provide `credentials.json` in scraper folder. Structure:
+You can quit mongo console now by using Ctrl + D.
+
+9. Create config file, `instance/config.cfg`. You can see `instance/config.template.cfg` for example and edit db name, username, and password to match the one you created before
+10. Finally, run Flask by using `FLASK_ENV="development" flask run`
+
+### Production
+
+1. Do everything in development step **except** step no 10, running Flask. Don't forget to modify `instance/config.cfg`, `start_db.sh`, and `scraper/credentials.json` if you want to
+2. Run gunicorn using `bash start.sh`
+3. Set your Nginx (or other reverse proxy of your choice) to reverse proxy to `sunjad.sock`. For example, to reverse proxy `/susunjadwal/api` you can set
 
 ```
-{
-    "<kd_org>": {
-        "username": "<username>",
-        "password": "<password>"
-    }
+location ^~ /susunjadwal/api {
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_pass http://unix:/path/to/susunjadwal/backend/sunjad.sock;
 }
 ```
-
-### Volunteer Dashboard
-
-Coming soon.
 
 ## License
 

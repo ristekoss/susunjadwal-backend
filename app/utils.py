@@ -26,6 +26,11 @@ def extract_header_data(header):
 
     return data
 
+def get_user_id(request):
+    data = extract_header_data(request.headers)
+    if data is not None and 'user_id' in data:
+        return data['user_id']
+    return None
 
 def process_sso_profile(sso_profile):
     period_name = app.config["ACTIVE_PERIOD"]

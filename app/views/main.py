@@ -9,6 +9,7 @@ from flask import (
 from app.decorators import require_jwt_token, require_same_user_id
 from models.period import Period
 from models.user_schedule import UserSchedule
+from app.utils import get_user_id
 
 
 router_main = Blueprint('router_sunjad', __name__)
@@ -51,8 +52,12 @@ def save_user_schedule(user_id):
 @router_main.route('/user_schedules/<user_schedule_id>')
 def get_user_schedule_detail(user_schedule_id):
     user_schedule = UserSchedule.objects(id=user_schedule_id).first()
+    request_user_id = get_user_id(request)
     return (jsonify({
-        'user_schedule': user_schedule.serialize()
+        'user_schedule': {
+            **user_schedule.serialize(),
+            "has_edit_access": str(user_schedule.user_id.id) == request_user_id
+        }
     }), 200)
 
 

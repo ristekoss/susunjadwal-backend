@@ -44,7 +44,6 @@ db.createUser(
     }
 );
 ```
-
 You can quit mongo console now by using Ctrl + D.
 
 9. Create config file, `instance/config.cfg`. You can see `instance/config.template.cfg` for example and edit db name, username, and password to match the one you created before

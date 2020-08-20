@@ -1,7 +1,7 @@
 #!/bin/bash
 
-MONGO_ADMIN_USER="<your_user>"
-MONGO_ADMIN_PASS="<your_pass>"
+MONGO_ADMIN_USER="<db_user>"
+MONGO_ADMIN_PASS="<db_pwd>"
 
 docker run -d \
 	--name ristek-mongo \

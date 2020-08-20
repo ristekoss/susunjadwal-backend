@@ -44,22 +44,6 @@ db.createUser(
     }
 );
 ```
-
-```
-db.createUser(
-    {
-        user: "nasyaoris",
-        pwd: "nasyanada",
-        roles:[
-            {
-                role: "readWrite",
-                db: "test"
-            }
-        ]
-    }
-);
-```
-
 You can quit mongo console now by using Ctrl + D.
 
 9. Create config file, `instance/config.cfg`. You can see `instance/config.template.cfg` for example and edit db name, username, and password to match the one you created before

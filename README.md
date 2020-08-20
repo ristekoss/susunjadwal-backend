@@ -52,6 +52,8 @@ You can quit mongo console now by using Ctrl + D.
 
 ### Production
 
+> We actually have a slightly different setup in the real Ristek server. For future maintainers, you may want to contact past contributors.
+
 1. Do everything in development step **except** step no 10, running Flask. Don't forget to modify `instance/config.cfg`, `start_db.sh`, and `scraper/credentials.json` if you want to
 2. Run gunicorn using `bash start.sh`
 3. Set your Nginx (or other reverse proxy of your choice) to reverse proxy to `sunjad.sock`. For example, to reverse proxy `/susunjadwal/api` you can set
@@ -65,6 +67,7 @@ location ^~ /susunjadwal/api {
     proxy_pass http://unix:/path/to/susunjadwal/backend/sunjad.sock;
 }
 ```
+4. Run the schedule scrapper cron job using `crontab -e` and add the line to run `cron.sh`. For example, to run it every 10 minutes add `*/10 * * * * bash /path/to/susunjadwal/backend/cron.sh`
 
 ## License
 

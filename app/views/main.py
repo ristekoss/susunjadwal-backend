@@ -49,7 +49,7 @@ def save_user_schedule(user_id):
     }), 201)
 
 
-@router_main.route('/user_schedules/<user_schedule_id>')
+@router_main.route('/user_schedules/<user_schedule_id>', methods=['GET'])
 def get_user_schedule_detail(user_schedule_id):
     user_schedule = UserSchedule.objects(id=user_schedule_id).first()
     request_user_id = get_user_id(request)
@@ -92,6 +92,22 @@ def rename_user_schedule(user_id, user_schedule_id):
     user_schedule = UserSchedule.objects(id=user_schedule_id).first()
     user_schedule.name = html.escape(data["name"])
     user_schedule.save()
+    return (jsonify({
+        'user_schedule': user_schedule.serialize()
+    }), 200)
+
+
+@router_main.route('/users/<user_id>/user_schedules/<user_schedule_id>', methods=['PUT'])
+@require_jwt_token
+@require_same_user_id
+def edit_user_schedule(user_id, user_schedule_id):
+    user_schedule = UserSchedule.objects(id=user_schedule_id).first()
+    data = request.json
+    user_schedule.clear_schedule_item()
+    for editedScheduleItem in data['schedule_items']:
+        user_schedule.add_schedule_item(**editedScheduleItem)
+    user_schedule.save()
+
     return (jsonify({
         'user_schedule': user_schedule.serialize()
     }), 200)

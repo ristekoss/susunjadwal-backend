@@ -31,6 +31,9 @@ class UserSchedule(mongo.Document):
         self.schedule_items.append(data)
         return data
 
+    def clear_schedule_item(self):
+        self.schedule_items = []
+
     def __get_schedule_items(self):
         data = []
         for item in self.schedule_items:

@@ -78,7 +78,9 @@ def get_user_schedule_list(user_id):
 @require_jwt_token
 @require_same_user_id
 def delete_user_schedule(user_id, user_schedule_id):
-    user_schedule = UserSchedule.objects(id=user_schedule_id).first()
+    user_schedule = UserSchedule.objects(user_id=user_id, id=user_schedule_id).first()
+    if user_schedule is None:
+        return jsonify({'message': 'Schedule not found.'}), 404
     user_schedule.deleted = True
     user_schedule.save()
     return (jsonify(), 204)
@@ -89,7 +91,9 @@ def delete_user_schedule(user_id, user_schedule_id):
 @require_same_user_id
 def rename_user_schedule(user_id, user_schedule_id):
     data = request.json
-    user_schedule = UserSchedule.objects(id=user_schedule_id).first()
+    user_schedule = UserSchedule.objects(user_id=user_id, id=user_schedule_id).first()
+    if user_schedule is None:
+        return jsonify({'message': 'Schedule not found.'}), 404
     user_schedule.name = html.escape(data["name"])
     user_schedule.save()
     return (jsonify({
@@ -101,7 +105,9 @@ def rename_user_schedule(user_id, user_schedule_id):
 @require_jwt_token
 @require_same_user_id
 def edit_user_schedule(user_id, user_schedule_id):
-    user_schedule = UserSchedule.objects(id=user_schedule_id).first()
+    user_schedule = UserSchedule.objects(user_id=user_id, id=user_schedule_id).first()
+    if user_schedule is None:
+        return jsonify({'message': 'Schedule not found.'}), 404
     data = request.json
     user_schedule.clear_schedule_item()
     for editedScheduleItem in data['schedule_items']:

@@ -105,11 +105,14 @@ def rename_user_schedule(user_id, user_schedule_id):
 @require_jwt_token
 @require_same_user_id
 def edit_user_schedule(user_id, user_schedule_id):
-    user_schedule = UserSchedule.objects(user_id=user_id, id=user_schedule_id).first()
-    # If the user is mismatched or the schedule is already deleted,
+    user_schedule = UserSchedule.objects(id=user_schedule_id).first()
+    # If the schedule doesn't exist or the user is mismatched,
     # create a new one with the same items.
     if user_schedule is None:
         user_schedule = UserSchedule(user_id=user_id)
+    elif str(user_schedule.user_id.id) != user_id:
+        name = f'{user_schedule.name} (copied)'
+        user_schedule = UserSchedule(user_id=user_id, name=name)
     data = request.json
     user_schedule.clear_schedule_item()
     for editedScheduleItem in data['schedule_items']:

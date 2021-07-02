@@ -13,6 +13,7 @@ Jinja2==3.0.1
 lxml==4.6.3
 MarkupSafe==2.0.1
 mongoengine==0.23.1
+pydantic==1.8.2
 PyJWT==1.7.1
 pymongo==3.11.4
 python-cas==1.4.0
@@ -20,6 +21,7 @@ pytz==2021.1
 requests==2.22.0
 six==1.16.0
 soupsieve==2.2.1
+typing-extensions==3.10.0.0
 urllib3==1.25.11
 Werkzeug==2.0.1
 WTForms==2.3.3

@@ -91,6 +91,7 @@ class AuthServices:
     @classmethod
     def process_auth_completion(cls,data: AuthCompletionData) -> dict:
         user = User.objects(completion_id=data.completion_id).first()
+        period_name = get_app_config("ACTIVE_PERIOD")
         if user is None:
             raise UserNotFound()
         base_kd_org_data = get_app_config("BASE_KD_ORG")
@@ -110,12 +111,24 @@ class AuthServices:
         user.batch = f"20{data.npm[:2]}"
         user.save()
 
+        period = Period.objects(
+            major_id=major.id,
+            name=period_name,
+            is_detail=True
+        ).first()
+
         token = generate_token(user.id, user.major.id)
         result = {
             "user_id": str(user.id),
             "major_id": str(major.id),
             "token": token
         }
+        if period is None:
+            result = {
+                **result,
+                "err": True,
+                "major_name": major.name
+            }
         return result
 
 

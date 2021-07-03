@@ -40,8 +40,8 @@ def auth_v2():
         client = get_cas_client(service_url)
         sso_profile = authenticate(ticket, client)
         if sso_profile is not None:
-            user_data = AuthServices.process_sso_auth(sso_profile)
-            return jsonify(user_data), 200
+            user_data,status_code = AuthServices.process_sso_auth(sso_profile)
+            return jsonify(user_data),status_code
 
     return jsonify(), 400
 

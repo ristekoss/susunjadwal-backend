@@ -7,7 +7,9 @@ from flask import (
 )
 
 from app.decorators import require_jwt_token, require_same_user_id
+from app.services.scrapper.schedule_scrapper import ScheduleScrapperServices
 from models.period import Period
+from models.user import User
 from models.user_schedule import UserSchedule
 from app.utils import get_user_id
 
@@ -123,6 +125,20 @@ def edit_user_schedule(user_id, user_schedule_id):
         'user_schedule': user_schedule.serialize()
     }), 200)
 
+@router_main.route('/scrap-schedule', methods=['POST'])
+@require_jwt_token
+def scrap_all_schedule():
+    header_data = request.headers
+    user: User = User.objects(id=header_data['user_id']).first()
+    data = request.json
+    username = data['username']
+    password = data['password']
+    response, status_code = ScheduleScrapperServices.scrape_course_page(
+        user=user,
+        username=username,
+        password=password
+    )
+    return jsonify(response), status_code
 
 def get_app_config(varname):
     return app.config.get(varname)

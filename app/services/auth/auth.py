@@ -1,9 +1,11 @@
 import uuid
+from typing import Tuple
 
 from app.exceptions.auth import UserNotFound, KdOrgNotFound
 from app.utils import generate_token
 from app.views.main import get_app_config
 from models.major import Major
+from models.period import Period
 from models.user import User
 from pydantic import BaseModel, validator, constr
 
@@ -22,8 +24,9 @@ class AuthCompletionData(BaseModel):
 
 class AuthServices:
     @classmethod
-    def process_sso_auth(cls, sso_profile) -> dict:
+    def process_sso_auth(cls, sso_profile) -> Tuple[dict, int]:
         user_name = sso_profile["username"]
+        period_name = get_app_config("ACTIVE_PERIOD")
         user = User.objects(username=user_name).first()
         if user is None:
             full_name = sso_profile['attributes']['ldap_cn']
@@ -43,7 +46,7 @@ class AuthServices:
                     'user_name':user_name,
                     'full_name':full_name,
                     'completion_id':str(completion_id)
-                }
+                }, 201
             user.npm = user_npm
             user.batch = f"20{user_npm[:2]}"
             major = Major.objects(kd_org=major_kd_org).first()
@@ -59,15 +62,31 @@ class AuthServices:
                 'user_name': user.username,
                 'full_name': user.name,
                 'completion_id':str(user.completion_id)
-            }
+            }, 201
+
+        major = user.major
+
+        period = Period.objects(
+            major_id=major.id,
+            name=period_name,
+            is_detail=True
+        ).first()
 
         token = generate_token(user.id, user.major.id)
+
         result = {
             "user_id": str(user.id),
             "major_id": str(user.major.id),
             "token": token
         }
-        return result
+
+        if period is None:
+            result = {
+                **result,
+                "err": True,
+                "major_name": major.name
+            }
+        return result, 200
 
     @classmethod
     def process_auth_completion(cls,data: AuthCompletionData) -> dict:

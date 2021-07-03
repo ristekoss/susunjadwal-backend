@@ -61,6 +61,7 @@ class Period(mongo.Document):
     name = mongo.StringField(max_length=16)
     is_detail = mongo.BooleanField(default=False)
     courses = mongo.ListField(mongo.EmbeddedDocumentField(Course))
+    last_update_at = mongo.DateTimeField(default=None)
 
     def __get_courses(self):
         data = []

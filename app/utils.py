@@ -35,6 +35,8 @@ def get_user_id(request):
 def process_sso_profile(sso_profile):
     period_name = app.config["ACTIVE_PERIOD"]
 
+    print(sso_profile)
+
     user_npm = sso_profile["attributes"]["npm"]
     major_name = sso_profile["attributes"]["study_program"]
     major_kd_org = sso_profile["attributes"]["kd_org"]

@@ -1,4 +1,3 @@
-import datetime
 from flask import current_app as app
 
 from app.jwt_utils import decode_token, encode_token

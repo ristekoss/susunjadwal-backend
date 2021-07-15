@@ -6,6 +6,7 @@ from flask import (
 )
 
 from app.decorators import require_jwt_token, require_same_user_id
+from app.jwt_utils import decode_token
 from app.services.scrapper.schedule_scrapper import ScheduleScrapperServices
 from models.period import Period
 from models.user import User
@@ -127,7 +128,8 @@ def edit_user_schedule(user_id, user_schedule_id):
 @require_jwt_token
 def scrap_all_schedule():
     header_data = request.headers
-    user: User = User.objects(id=header_data['user_id']).first()
+    user_data = decode_token(header_data["Authorization"].split()[1])
+    user: User = User.objects(id=user_data['user_id']).first()
     data = request.json
     username = data['username']
     password = data['password']

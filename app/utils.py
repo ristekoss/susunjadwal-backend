@@ -91,3 +91,7 @@ def process_sso_profile(sso_profile):
     }
 
     return result
+
+
+def get_app_config(varname):
+    return app.config.get(varname)

@@ -1,7 +1,6 @@
 import html
 from flask import (
     Blueprint,
-    current_app as app,
     jsonify,
     request
 )
@@ -11,8 +10,7 @@ from app.services.scrapper.schedule_scrapper import ScheduleScrapperServices
 from models.period import Period
 from models.user import User
 from models.user_schedule import UserSchedule
-from app.utils import get_user_id
-
+from app.utils import get_user_id, get_app_config
 
 router_main = Blueprint('router_sunjad', __name__)
 
@@ -140,5 +138,3 @@ def scrap_all_schedule():
     )
     return jsonify(response), status_code
 
-def get_app_config(varname):
-    return app.config.get(varname)

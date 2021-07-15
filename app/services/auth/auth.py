@@ -2,8 +2,7 @@ import uuid
 from typing import Tuple
 
 from app.exceptions.auth import UserNotFound, KdOrgNotFound
-from app.utils import generate_token
-from app.views.main import get_app_config
+from app.utils import generate_token, get_app_config
 from models.major import Major
 from models.period import Period
 from models.user import User

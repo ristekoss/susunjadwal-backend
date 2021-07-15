@@ -7,8 +7,7 @@ from flask import (
 
 from app.exceptions.auth import UserNotFound, KdOrgNotFound
 from app.services.auth.auth import AuthServices, AuthCompletionData
-from app.utils import process_sso_profile
-from app.views.main import get_app_config
+from app.utils import process_sso_profile, get_app_config
 from sso.utils import (
     authenticate,
     get_cas_client,

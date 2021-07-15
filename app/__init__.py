@@ -54,7 +54,7 @@ with open(base_dir / "sso" / "faculty_exchange_route.json") as f:
 app.config['UPLOAD_FOLDER'] = "__files__"
 
 # Activate gunicorn logger when the application is executed using gunicorn
-if __name__ != "__main__":
+if __name__ != "__main__" and os.environ.get("FLASK_ENV") != "development":
     gunicorn_logger = logging.getLogger("gunicorn.error")
     app.logger.handlers = gunicorn_logger.handlers
     app.logger.setLevel(gunicorn_logger.level)

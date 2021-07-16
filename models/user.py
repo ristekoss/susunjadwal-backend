@@ -7,3 +7,6 @@ class User(mongo.Document):
     npm = mongo.StringField(max_length=20)
     batch = mongo.StringField(max_length=5)
     major = mongo.ReferenceField("Major")
+    update_schedule_at = mongo.DateTimeField(default=None)
+    completion_id = mongo.UUIDField(default=None)
+

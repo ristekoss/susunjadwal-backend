@@ -47,7 +47,8 @@ db.createUser(
 You can quit mongo console now by using Ctrl + D.
 
 9. Create config file, `instance/config.cfg`. You can see `instance/config.template.cfg` for example and edit db name, username, and password to match the one you created before
-10. Finally, run Flask by using `FLASK_ENV="development" flask run`
+10. Run `docker-compose up -d` to start the rabbit mq
+11. Finally, run Flask by using `FLASK_ENV="development" flask run`
 
 ### Production
 

@@ -66,7 +66,8 @@ app.register_blueprint(router_uploader, url_prefix=app.config["BASE_PATH"])
 app.register_blueprint(cron)
 
 CORS(app)
-MongoEngine(app)\
+MongoEngine(app)
+
 
 # Init connection to rabbit mq
 init_pika(app)

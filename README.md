@@ -48,15 +48,17 @@ You can quit mongo console now by using Ctrl + D.
 
 9. Create config file, `instance/config.cfg`. You can see `instance/config.template.cfg` for example and edit db name, username, and password to match the one you created before
 10. Run `docker-compose up -d` to start the rabbit mq
-11. Finally, run Flask by using `FLASK_ENV="development" flask run`
+11. Create `.env` file from `.env.example` file
+12. Finally, run Flask by using `FLASK_ENV="development" flask run`
 
 ### Production
 
+#### Old
 > We actually have a slightly different setup in the real Ristek server. For future maintainers, you may want to contact past contributors.
 
 1. Do everything in development step **except** step no 10, running Flask. Don't forget to modify `instance/config.cfg`, `start_db.sh`, and `scraper/credentials.json` if you want to
-2. Run gunicorn using `bash start.sh`
-3. Set your Nginx (or other reverse proxy of your choice) to reverse proxy to `sunjad.sock`. For example, to reverse proxy `/susunjadwal/api` you can set
+3. Run gunicorn using `bash start.sh`
+4. Set your Nginx (or other reverse proxy of your choice) to reverse proxy to `sunjad.sock`. For example, to reverse proxy `/susunjadwal/api` you can set
 
 ```
 location ^~ /susunjadwal/api {
@@ -68,6 +70,11 @@ location ^~ /susunjadwal/api {
 }
 ```
 4. Run the schedule scrapper cron job using `crontab -e` and add the line to run `cron.sh`. For example, to run it every 10 minutes add `*/10 * * * * bash /path/to/susunjadwal/backend/cron.sh`
+
+#### New
+1. Do everything in development step **except** step no 10, running Flask.
+2. Create `config.cfg` and fill the DB credentials according the given specification in `docker-compose-deploy.yaml` (host must be `mongo`)
+3. Run `docker-compose -f docker-compose-deploy.yaml up -d` to execute all
 
 ## License
 

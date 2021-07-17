@@ -1,0 +1,37 @@
+version: "3.7"
+
+services:
+  rmq:
+    restart: always
+    image: rabbitmq:management-alpine
+    ports:
+      - "15671-15672:15671-15672"
+
+  mongo:
+    restart: always
+    build:
+      dockerfile: MongoDB-Dockerfile
+      context: .
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root-user
+      MONGO_INITDB_ROOT_PASSWORD: root-user
+      MONGO_INITDB_USERNAME: user
+      MONGO_INITDB_PASSWORD: user
+      MONGO_INITDB_DATABASE: backend
+
+  server:
+    build:
+      dockerfile: Server-Dockerfile
+      context: .
+    restart: always
+    depends_on:
+      - rmq
+      - mongo
+    environment:
+      - RABBIT_HOST=rmq
+      - RABBIT_USERNAME=guest
+      - RABBIT_PASSWORD=guest
+    ports:
+      - "8000:8000"
+
+

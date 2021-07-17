@@ -1,7 +1,6 @@
 import datetime
 import json
-import logging
-import os
+import requests
 from threading import Thread
 from typing import Tuple
 
@@ -10,7 +9,7 @@ from app.message_queue import request_mq_channel_from_pool, create_new_mq_channe
 from models.major import Major
 from models.period import Period
 from models.user import User
-from scraper.main import scrape_courses_with_credentials
+from scraper.main import scrape_courses_with_credentials, AUTH_URL
 
 
 class ScheduleScrapperServices:
@@ -71,6 +70,13 @@ class ScheduleScrapperServices:
 
     @classmethod
     def scrape_course_page(cls, user: User, username: str, password: str) -> Tuple[dict, int]:
+        req = requests.Session()
+        r = req.post(AUTH_URL, data={'u': username,
+                                     'p': password}, verify=False)
+        if "Login Failed" in r.text:
+            return {
+                       'success': False
+                   }, 400
         exchange_name = get_app_config("UPDATE_COURSE_LIST_EXCHANGE_NAME")
         major: Major = user.major
         kd_org = major.kd_org
@@ -86,23 +92,3 @@ class ScheduleScrapperServices:
         return {
                    'success': True
                }, 200
-
-    # @classmethod
-    # def scrape_course_page(cls, user: User, username: str, password: str) -> Tuple[dict, int]:
-    #     active_period = get_app_config("ACTIVE_PERIOD")
-    #     major: Major = user.major
-    #     courses = scrape_courses_with_credentials(active_period, username, password)
-    #     period = Period.objects(major_id=major.id, name=active_period, is_detail=True).first()
-    #     if period is None:
-    #         period = Period(
-    #             major_id=major.id,
-    #             is_detail=True,
-    #             name=active_period,
-    #         )
-    #     period.courses = courses
-    #     period.last_update_at = datetime.datetime.now()
-    #     period.save()
-    #
-    #     return {
-    #         'success': True
-    #     }, 200

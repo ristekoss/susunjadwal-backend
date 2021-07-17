@@ -124,7 +124,6 @@ def edit_user_schedule(user_id, user_schedule_id):
         'user_schedule': user_schedule.serialize()
     }), 200)
 
-
 @router_main.route('/scrape-schedule', methods=['POST'])
 @require_jwt_token
 def scrap_all_schedule():

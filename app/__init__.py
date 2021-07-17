@@ -68,6 +68,7 @@ app.register_blueprint(cron)
 CORS(app)
 MongoEngine(app)
 
+
 # Init connection to rabbit mq
 init_pika(app)
 

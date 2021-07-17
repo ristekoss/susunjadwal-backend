@@ -21,7 +21,7 @@ class ScheduleScrapperServices:
         active_period = app.config.get("ACTIVE_PERIOD")
         channel = create_new_mq_channel(app)
         queue_name = faculty_name.lower()
-        channel.queue_declare(queue_name)
+        channel.queue_declare(queue_name, durable=True)
         channel.queue_bind(
             exchange=exchange_name, queue=queue_name, routing_key=routing_key
         )

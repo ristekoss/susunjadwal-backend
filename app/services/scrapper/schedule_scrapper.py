@@ -70,13 +70,22 @@ class ScheduleScrapperServices:
 
     @classmethod
     def scrape_course_page(cls, user: User, username: str, password: str) -> Tuple[dict, int]:
+        now = datetime.datetime.utcnow()
         req = requests.Session()
         r = req.post(AUTH_URL, data={'u': username,
                                      'p': password}, verify=False)
         if "Login Failed" in r.text:
             return {
-                       'success': False
+                       'success': False,
+                       'message': "Login gagal"
                    }, 400
+        if user.last_update_course_request_at:
+            time_difference = now - user.last_update_course_request_at
+            if time_difference.seconds < 300:
+                return {
+                           'success': False,
+                           'message': "Anda sudah melakukan permintaan sebelumnya, harap tunggu 5 menit"
+                       }, 400
         exchange_name = get_app_config("UPDATE_COURSE_LIST_EXCHANGE_NAME")
         major: Major = user.major
         kd_org = major.kd_org
@@ -84,11 +93,12 @@ class ScheduleScrapperServices:
             'major_id': str(major.id),
             'username': username,
             'password': password,
-            'requested_at': datetime.datetime.utcnow().isoformat()
         }
         with request_mq_channel_from_pool() as channel:
             message = json.dumps(message)
             channel.basic_publish(exchange=exchange_name, routing_key=kd_org, body=message)
+        user.last_update_course_request_at = now
+        user.save()
         return {
                    'success': True
                }, 200

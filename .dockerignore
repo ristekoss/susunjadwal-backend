@@ -139,4 +139,5 @@ dmypy.json
 cython_debug/
 
 !instance/config.cfg
+db
 

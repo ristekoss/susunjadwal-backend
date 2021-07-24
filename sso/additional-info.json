@@ -514,6 +514,11 @@
     "study_program": "Arsitektur - Intl (Architecture - Intl)",
     "educational_program": "S1 Kls Internasional (Intl. Class Undergraduate Program)"
   },
+  "06.07.04.01": {
+    "faculty": "TEKNIK",
+    "study_program": "Teknik Industri - Intl (Industrial Engineering - Intl)",
+    "educational_program": "S1 Kls Internasional (Intl. Class Undergraduate Program)"
+  },
   "03.05.04.01": {
     "faculty": "TEKNIK",
     "study_program": "Arsitektur (Architecture)",
@@ -1627,6 +1632,11 @@
   "04.01.03.01": {
     "faculty": "MATEMATIKA & ILMU PENGETAHUAN ALAM",
     "study_program": "Statistika (Statistic)",
+    "educational_program": "S1 Reguler (Undergraduate Program)"
+  },
+  "05.01.03.01": {
+    "faculty": "MATEMATIKA & ILMU PENGETAHUAN ALAM",
+    "study_program": "Ilmu Aktuaria (Actuarial Science)",
     "educational_program": "S1 Reguler (Undergraduate Program)"
   }
 }

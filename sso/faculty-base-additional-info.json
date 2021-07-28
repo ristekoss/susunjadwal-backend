@@ -418,6 +418,16 @@
       "kd_org": "04.01.03.01",
       "study_program": "Statistika (Statistic)",
       "educational_program": "S1 Reguler (Undergraduate Program)"
+    },
+    {
+      "kd_org": "10.02.03.01",
+      "study_program": "Geologi (Geology)",
+      "educational_program": "S1 Paralel (S1 Paralel)"
+    },
+    {
+      "kd_org": "06.01.03.01",
+      "study_program": "Statistika (Statistic)",
+      "educational_program": "S1 Paralel (S1 Paralel)"
     }
   ],
   "TEKNIK": [

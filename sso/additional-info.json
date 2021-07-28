@@ -1643,5 +1643,15 @@
     "faculty": "MATEMATIKA & ILMU PENGETAHUAN ALAM",
     "study_program": "Ilmu Aktuaria (Actuarial Science)",
     "educational_program": "S1 Reguler (Undergraduate Program)"
+  },
+  "10.02.03.01": {
+    "faculty": "MATEMATIKA & ILMU PENGETAHUAN ALAM",
+    "study_program": "Geologi (Geology)",
+    "educational_program": "S1 Paralel (S1 Paralel)"
+  },
+  "06.01.03.01": {
+    "faculty": "MATEMATIKA & ILMU PENGETAHUAN ALAM",
+    "study_program": "Statistika (Statistic)",
+    "educational_program": "S1 Paralel (S1 Paralel)"
   }
 }

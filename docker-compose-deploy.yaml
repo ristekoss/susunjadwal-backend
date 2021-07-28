@@ -33,7 +33,14 @@ services:
       - RABBIT_HOST=rmq
       - RABBIT_USERNAME=guest
       - RABBIT_PASSWORD=guest
+      - PORT=5000
     ports:
-      - "8000:8000"
+      - "5000:5000"
+    volumes:
+      - ./instance/config.cfg:/opt/app/instance/config.cfg
+      - ./sso/additional-info.json:/opt/app/sso/additional-info.json
+      - ./sso/faculty-base-additional-info.json:/opt/app/sso/faculty-base-additional-info.json
+      - ./sso/faculty_exchange_route.json:/opt/app/sso/faculty_exchange_route.json
+
 
 

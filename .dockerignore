@@ -138,6 +138,5 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-!instance/config.cfg
 db
 

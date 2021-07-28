@@ -8,6 +8,9 @@ class ScheduleItem(mongo.EmbeddedDocument):
     room = mongo.StringField(max_length=64)
     start = mongo.StringField(max_length=16)
     end = mongo.StringField(max_length=16)
+    course_name = mongo.StringField(max_length=128, default=None)
+    sks = mongo.IntField(default=0)
+    lecturer = mongo.ListField(mongo.StringField(max_length=128), default=[])
 
     def serialize(self):
         return {
@@ -15,7 +18,10 @@ class ScheduleItem(mongo.EmbeddedDocument):
             "day": self.day,
             "room": self.room,
             "start": self.start,
-            "end": self.end
+            "end": self.end,
+            "course_name": self.course_name,
+            "sks": self.sks,
+            "lecturer": self.lecturer
         }
 
 

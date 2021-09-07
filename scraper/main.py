@@ -2,6 +2,7 @@ import json
 import os
 import re
 import requests
+import datetime
 
 from bs4 import BeautifulSoup
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
@@ -95,13 +96,31 @@ def get_period_and_kd_org(html):
     return None, None
 
 def generate_desc_prerequisite(courses, req):
+    print("=== generating desc and prereq ===")
+    now = datetime.datetime.now()
     for course in courses:
         html = req.get(DETAIL_COURSES_URL.format(course=course.course_code, curr=course.curriculum)).text
         soup = BeautifulSoup(html, 'html.parser')
-        desc = soup.find(text="Deskripsi Mata Kuliah")
-        prerequisite = soup.find(text="Prasyarat Mata Kuliah")
-        print(str(desc)+" :: "+str(prerequisite))
-        break
+        for textarea in soup.findAll('textarea'):
+            if textarea.contents:
+                textarea_content = textarea.contents[0]
+                desc = textarea_content.replace('\r\n', ' ')
+                if len(desc) > 2048:
+                    desc = ""
+            else:
+                desc = ""
+            break
+        components = soup.find(text="Prasyarat Mata Kuliah").parent.findNextSibling('td').contents
+        prerequisites = ""
+        for component in components:
+            p = re.search('([A-Z]{4}[0-9]{6})', str(component))
+            if p:
+                prerequisites += p.group().strip() + ","
+        course.description = desc
+        course.prerequisite = prerequisites[:-1]
+    end = datetime.datetime.now()
+    print("time elapsed ms :: "+ str((end-now).microseconds))
+    print("time elapsed s :: "+ str((end-now).seconds))
 
 def create_courses(html, is_detail=False):
     soup = BeautifulSoup(html, 'html.parser')

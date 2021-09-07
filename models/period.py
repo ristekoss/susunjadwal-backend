@@ -53,6 +53,8 @@ class Course(mongo.EmbeddedDocument):
         return {
             "name": self.name,
             "credit": self.credit,
+            "code": self.course_code,
+            "curriculum": self.curriculum,
             "term": self.term,
             "classes": self.__get_classes()
         }

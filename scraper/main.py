@@ -113,12 +113,15 @@ def create_courses(html, is_detail=False):
     courses = []
     for class_ in classes:
         course_name = class_.strong.text
-        course_code = re.search('([A-Z]{4}[0-9]{6}) -', class_.text).group()[:-2]
-        curriculum = re.search('Kurikulum ([0-9,.,-]+)', class_.text).group()[10:]
-
         m = re.search('([0-9]+) SKS, Term ([0-9]+)', class_.text)
         if m:
             credit, term = m.group().split(' SKS, Term ')
+
+        c = re.search('([A-Z]{4}[0-9]{6}) -', class_.text)
+        course_code = c.group()[:-2] if c else ''
+
+        c = re.search('Kurikulum ([0-9,.,-]+)', class_.text)
+        curriculum = c.group()[10:] if c else ''
 
         classes = []
         for sib in class_.parent.find_next_siblings('tr'):

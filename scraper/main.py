@@ -22,6 +22,7 @@ AUTH_URL = f"{BASE_URL}/Authentication/Index"
 CHANGEROLE_URL = f"{BASE_URL}/Authentication/ChangeRole"
 DETAIL_SCHEDULE_URL = f"{BASE_URL}/Schedule/Index?period={{period}}&search="
 GENERAL_SCHEDULE_URL = f"{BASE_URL}/Schedule/IndexOthers?fac={{fac}}&org={{org}}&per={{period}}&search="
+DETAIL_COURSES_URL = f"{BASE_URL}/Course/Detail?course={{course}}&curr={{curr}}"
 DEFAULT_CREDENTIAL = "01.00.12.01"
 
 def scrape_courses_with_credentials(period, username, password):
@@ -31,6 +32,7 @@ def scrape_courses_with_credentials(period, username, password):
     r = req.get(CHANGEROLE_URL)
     r = req.get(DETAIL_SCHEDULE_URL.format(period=period))
     courses = create_courses(r.text, is_detail=True)
+    generate_desc_prerequisite(courses, req)
     return courses
 
 
@@ -92,6 +94,14 @@ def get_period_and_kd_org(html):
 
     return None, None
 
+def generate_desc_prerequisite(courses, req):
+    for course in courses:
+        html = req.get(DETAIL_COURSES_URL.format(course=course.course_code, curr=course.curriculum)).text
+        soup = BeautifulSoup(html, 'html.parser')
+        desc = soup.find(text="Deskripsi Mata Kuliah")
+        prerequisite = soup.find(text="Prasyarat Mata Kuliah")
+        print(str(desc)+" :: "+str(prerequisite))
+        break
 
 def create_courses(html, is_detail=False):
     soup = BeautifulSoup(html, 'html.parser')
@@ -106,6 +116,14 @@ def create_courses(html, is_detail=False):
         m = re.search('([0-9]+) SKS, Term ([0-9]+)', class_.text)
         if m:
             credit, term = m.group().split(' SKS, Term ')
+
+        c = str(class_.text).split(" - ")
+        if c:
+            course_code = c[0].strip()
+
+        c = str(class_.text).split("Kurikulum")
+        if c:
+            curriculum = c[1].strip()
 
         classes = []
         for sib in class_.parent.find_next_siblings('tr'):
@@ -157,7 +175,9 @@ def create_courses(html, is_detail=False):
                 name=course_name,
                 credit=credit,
                 term=term,
-                classes=classes
+                classes=classes,
+                course_code=course_code,
+                curriculum=curriculum
             ))
 
     return courses

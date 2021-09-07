@@ -36,6 +36,8 @@ class Class(mongo.EmbeddedDocument):
 
 
 class Course(mongo.EmbeddedDocument):
+    course_code = mongo.StringField(max_length=16)
+    curriculum = mongo.StringField(max_length=32)
     name = mongo.StringField(max_length=128)
     credit = mongo.IntField()
     term = mongo.IntField()

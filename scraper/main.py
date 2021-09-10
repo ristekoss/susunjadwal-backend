@@ -203,3 +203,4 @@ def create_courses(html, is_detail=False):
             ))
 
     return courses
+    

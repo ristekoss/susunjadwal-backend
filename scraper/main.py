@@ -100,7 +100,11 @@ def generate_desc_prerequisite(period, username, password):
                                     'p': password}, verify=False)
     r = req.get(CHANGEROLE_URL)
     for course in period.courses:
-        r = req.get(DETAIL_COURSES_URL.format(course=course.course_code, curr=course.curriculum)).text
+        code = course.course_code
+        curr = course.curriculum
+        if code == "" or curr == "":
+            continue
+        r = req.get(DETAIL_COURSES_URL.format(course=code, curr=curr)).text
         soup = BeautifulSoup(r, 'html.parser')
         for textarea in soup.findAll('textarea'):
             if textarea.contents:
@@ -113,10 +117,12 @@ def generate_desc_prerequisite(period, username, password):
             break
         components = soup.find(text="Prasyarat Mata Kuliah").parent.findNextSibling('td').contents
         prerequisites = ""
-        for component in components:
-            p = re.search('([A-Z]{4}[0-9]{6})', str(component))
-            if p:
-                prerequisites += p.group().strip() + ","
+        if len(components)>1:
+            components = str(components[1]).split("<tr>")
+            for component in components:
+                p = re.search('([A-Z]{4}[0-9]{6})', str(component))
+                if p:
+                    prerequisites += p.group().strip() + ","
         course.description = desc
         course.prerequisite = prerequisites[:-1]
     period.save()

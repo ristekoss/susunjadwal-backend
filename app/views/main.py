@@ -139,3 +139,16 @@ def scrap_all_schedule():
         password=password
     )
     return jsonify(response), status_code
+
+@router_main.route('/courses', methods=['GET'])
+def get_all_courses():
+    active_period = get_app_config("ACTIVE_PERIOD")
+    period = Period.objects(
+        name=active_period
+    ).first()
+    all_courses = []
+    for course in period.courses:
+        all_courses.append(course.serialize_ulas_kelas()) 
+    return (jsonify({
+        'courses': all_courses
+    }), 200)

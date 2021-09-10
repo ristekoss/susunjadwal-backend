@@ -33,7 +33,6 @@ def scrape_courses_with_credentials(period, username, password):
     r = req.get(CHANGEROLE_URL)
     r = req.get(DETAIL_SCHEDULE_URL.format(period=period))
     courses = create_courses(r.text, is_detail=True)
-    generate_desc_prerequisite(courses, req)
     return courses
 
 
@@ -95,12 +94,14 @@ def get_period_and_kd_org(html):
 
     return None, None
 
-def generate_desc_prerequisite(courses, req):
-    print("=== generating desc and prereq ===")
-    now = datetime.datetime.now()
-    for course in courses:
-        html = req.get(DETAIL_COURSES_URL.format(course=course.course_code, curr=course.curriculum)).text
-        soup = BeautifulSoup(html, 'html.parser')
+def generate_desc_prerequisite(period, username, password):
+    req = requests.Session()
+    r = req.post(AUTH_URL, data={'u': username,
+                                    'p': password}, verify=False)
+    r = req.get(CHANGEROLE_URL)
+    for course in period.courses:
+        r = req.get(DETAIL_COURSES_URL.format(course=course.course_code, curr=course.curriculum)).text
+        soup = BeautifulSoup(r, 'html.parser')
         for textarea in soup.findAll('textarea'):
             if textarea.contents:
                 textarea_content = textarea.contents[0]
@@ -118,9 +119,7 @@ def generate_desc_prerequisite(courses, req):
                 prerequisites += p.group().strip() + ","
         course.description = desc
         course.prerequisite = prerequisites[:-1]
-    end = datetime.datetime.now()
-    print("time elapsed ms :: "+ str((end-now).microseconds))
-    print("time elapsed s :: "+ str((end-now).seconds))
+    period.save()
 
 def create_courses(html, is_detail=False):
     soup = BeautifulSoup(html, 'html.parser')

@@ -9,7 +9,7 @@ from app.message_queue import request_mq_channel_from_pool, create_new_mq_channe
 from models.major import Major
 from models.period import Period
 from models.user import User
-from scraper.main import scrape_courses_with_credentials, AUTH_URL
+from scraper.main import scrape_courses_with_credentials, AUTH_URL, generate_desc_prerequisite
 
 
 class ScheduleScrapperServices:
@@ -47,6 +47,7 @@ class ScheduleScrapperServices:
             period.last_update_at = now
             period.save()
             app.logger.info(f"Done scrapping kd_org: {method.routing_key}; period: {active_period}; at: {now} UTC")
+            generate_desc_prerequisite(period, username, password)
 
         channel.basic_consume(
             queue=queue_name, on_message_callback=callback, auto_ack=True

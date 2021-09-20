@@ -2,7 +2,6 @@ import json
 import os
 import re
 import requests
-import datetime
 
 from bs4 import BeautifulSoup
 from requests.packages.urllib3.exceptions import InsecureRequestWarning

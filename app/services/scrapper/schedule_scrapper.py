@@ -47,6 +47,7 @@ class ScheduleScrapperServices:
             period.last_update_at = now
             period.save()
             app.logger.info(f"Done scrapping kd_org: {method.routing_key}; period: {active_period}; at: {now} UTC")
+            # Generate description and prerequisite data for all courses
             generate_desc_prerequisite(period, username, password)
 
         channel.basic_consume(

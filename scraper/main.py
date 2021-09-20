@@ -103,6 +103,8 @@ def generate_desc_prerequisite(period, username, password):
         code = course.course_code
         curr = course.curriculum
         if code == "" or curr == "":
+            course.description = ""
+            course.prerequisite = ""
             continue
         r = req.get(DETAIL_COURSES_URL.format(course=code, curr=curr)).text
         soup = BeautifulSoup(r, 'html.parser')
@@ -203,4 +205,3 @@ def create_courses(html, is_detail=False):
             ))
 
     return courses
-    

@@ -9,21 +9,14 @@ Monorepo setup with React frontend and Flask backend.
 ## Structure explained
 
 ```
-backend/
-  app/                // general views
-  models/             // mongoDB models
-  scraper/            // courses (academic.ui.ac.id) scraper
-  sso/                // SSO UI authentication logic
-  README.md           // important info
-  requirements.txt    // dependency list
-  start.sh            // script to start server
-  ...
-frontend/
-  public/             // general configuration
-  src/                // react stuff (where the fun happens)
-  README.md           // important info
-  package.json        // dependency list
-  ...
+app/                // general views
+models/             // mongoDB models
+scraper/            // courses (academic.ui.ac.id) scraper
+sso/                // SSO UI authentication logic
+README.md           // important info
+requirements.txt    // dependency list
+start.sh            // script to start server
+...
 README.md             // workspace-wide information shown in github
 ```
 

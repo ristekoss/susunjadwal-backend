@@ -40,7 +40,8 @@ def get_courses(major_id):
 @require_same_user_id
 def save_user_schedule(user_id):
     data = request.json
-    user_schedule = UserSchedule(user_id=user_id)
+    active_period = get_app_config("ACTIVE_PERIOD")
+    user_schedule = UserSchedule(user_id=user_id, period=active_period)
     for item in data['schedule_items']:
         user_schedule.add_schedule_item(**item)
     user_schedule.save()
@@ -106,14 +107,15 @@ def rename_user_schedule(user_id, user_schedule_id):
 @require_jwt_token
 @require_same_user_id
 def edit_user_schedule(user_id, user_schedule_id):
+    active_period = get_app_config("ACTIVE_PERIOD")
     user_schedule = UserSchedule.objects(id=user_schedule_id).first()
     # If the schedule doesn't exist or the user is mismatched,
     # create a new one with the same items.
     if user_schedule is None:
-        user_schedule = UserSchedule(user_id=user_id)
+        user_schedule = UserSchedule(user_id=user_id, period=active_period)
     elif str(user_schedule.user_id.id) != user_id:
         name = f'{user_schedule.name} (copied)'
-        user_schedule = UserSchedule(user_id=user_id, name=name)
+        user_schedule = UserSchedule(user_id=user_id, name=name, period=active_period)
     data = request.json
     user_schedule.clear_schedule_item()
     for editedScheduleItem in data['schedule_items']:

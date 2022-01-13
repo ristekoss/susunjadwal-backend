@@ -31,6 +31,7 @@ class UserSchedule(mongo.Document):
     schedule_items = mongo.ListField(mongo.EmbeddedDocumentField(ScheduleItem))
     deleted = mongo.BooleanField(default=False)
     created_at = mongo.DateTimeField(default=datetime.now)
+    period = mongo.StringField(max_length=6, default='2021-1')
 
     def add_schedule_item(self, **kwargs):
         data = ScheduleItem(**kwargs)
@@ -51,5 +52,6 @@ class UserSchedule(mongo.Document):
             "id": str(self.id),
             "name": self.name,
             "created_at": self.created_at,
-            "schedule_items": self.__get_schedule_items()
+            "schedule_items": self.__get_schedule_items(),
+            "period": self.period
         }

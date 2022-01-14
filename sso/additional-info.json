@@ -449,6 +449,11 @@
     "study_program": "Arsitektur Interior (Interior Architechture)",
     "educational_program": "S1 Reguler (Undergraduate Program)"
   },
+  "12.03.04.01": {
+    "faculty": "TEKNIK",
+    "study_program": "Teknik Biomedik (Biomedical Engineering)",
+    "educational_program": "S1 Reguler (Undergraduate Program)"
+  },
   "06.06.04.01": {
     "faculty": "TEKNIK",
     "study_program": "Teknologi Bioproses (Bioprocess Technology)",

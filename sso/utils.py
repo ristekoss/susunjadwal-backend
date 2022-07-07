@@ -1,7 +1,7 @@
 import os
 import json
 
-from cas import CASClient
+from sso.cas import CASClient
 from flask import current_app as app
 
 

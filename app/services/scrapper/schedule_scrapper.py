@@ -1,6 +1,7 @@
 import datetime
 import json
 import requests
+import ssl
 from threading import Thread
 from typing import Tuple
 
@@ -11,6 +12,13 @@ from models.period import Period
 from models.user import User
 from scraper.main import scrape_courses_with_credentials, AUTH_URL, generate_desc_prerequisite
 
+class TLSAdapter(requests.adapters.HTTPAdapter):
+
+    def init_poolmanager(self, *args, **kwargs):
+        ctx = ssl.create_default_context()
+        ctx.set_ciphers('DEFAULT@SECLEVEL=1')
+        kwargs['ssl_context'] = ctx
+        return super(TLSAdapter, self).init_poolmanager(*args, **kwargs)
 
 class ScheduleScrapperServices:
     @classmethod
@@ -74,8 +82,15 @@ class ScheduleScrapperServices:
     def scrape_course_page(cls, user: User, username: str, password: str) -> Tuple[dict, int]:
         now = datetime.datetime.utcnow()
         req = requests.Session()
-        r = req.post(AUTH_URL, data={'u': username,
-                                     'p': password}, verify=False)
+        # req.verify = False
+        # req.trust_env = False
+        # req.mount('https://', TLSAdapter())
+        r = req.post(
+            AUTH_URL, 
+            data={'u': username, 'p': password},
+            # headers={'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36 Edg/103.0.1264.49"},
+            verify=False
+        )
         if "Login Failed" in r.text:
             return {
                        'success': False,

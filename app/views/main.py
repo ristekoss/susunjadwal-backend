@@ -25,7 +25,6 @@ def get_courses(major_id):
         name=active_period,
         is_detail=True
     ).first()
-
     if period is None:
         period = Period.objects(
             major_id=major_id,

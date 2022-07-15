@@ -1692,5 +1692,74 @@
       "study_program": "Ilmu Administrasi (Administration)",
       "educational_program": "S3 (Doctoral Program)"
     }
+  ],
+  "ILMU LINGKUNGAN": [
+    {
+      "kd_org": "01.00.19.01",
+      "study_program": "Ilmu Lingkungan",
+      "educational_program": "S2 (Graduate Program)"
+    },
+    {
+      "kd_org": "02.00.19.01",
+      "study_program": "Ilmu Lingkungan",
+      "educational_program": "S3 (Doctoral Program)"
+    },
+    {
+      "kd_org": "03.00.19.01",
+      "study_program": "Manajemen Bencana",
+      "educational_program": "S2 (Graduate Program)"
+    }
+  ],
+  "KAJIAN STRATEJIK DAN GLOBAL": [
+    {
+      "kd_org": "01.00.20.01",
+      "study_program": "Kajian Ketahanan Nasional (National Resilience)",
+      "educational_program": "S2 (Graduate Program)"
+    },
+    {
+      "kd_org": "02.00.20.01",
+      "study_program": "Kajian Ilmu Kepolisian (Police Studies)",
+      "educational_program": "S2 (Graduate Program)"
+    },
+    {
+      "kd_org": "03.00.20.01",
+      "study_program": "Kajian Gender (Gender Studies)",
+      "educational_program": "S2 (Graduate Program)"
+    },
+    {
+      "kd_org": "04.00.20.01",
+      "study_program": "Kajian Wilayah Amerika (American Studies)",
+      "educational_program": "S2 (Graduate Program)"
+    },
+    {
+      "kd_org": "05.00.20.01",
+      "study_program": "Kajian Wilayah Eropa (European Studies)",
+      "educational_program": "S2 (Graduate Program)"
+    },
+    {
+      "kd_org": "06.00.20.01",
+      "study_program": "Kajian Wilayah Jepang (Japanese Studies)",
+      "educational_program": "S2 (Graduate Program)"
+    },
+    {
+      "kd_org": "07.00.20.01",
+      "study_program": "Kajian Wilayah Timur Tengah dan Islam (Islamics & Middle Eastern Studies)",
+      "educational_program": "S2 (Graduate Program)"
+    },
+    {
+      "kd_org": "08.00.20.01",
+      "study_program": "Kajian Pengembangan Perkotaan (Urban Studies)",
+      "educational_program": "S2 (Graduate Program)"
+    },
+    {
+      "kd_org": "09.00.20.01",
+      "study_program": "Kajian Terorisme",
+      "educational_program": "S2 (Graduate Program)"
+    },
+    {
+      "kd_org": "10.00.20.01",
+      "study_program": "Kajian Stratejik dan Global",
+      "educational_program": "S3 (Doctoral Program)"
+    } 
   ]
 }

@@ -1658,5 +1658,70 @@
     "faculty": "MATEMATIKA & ILMU PENGETAHUAN ALAM",
     "study_program": "Statistika (Statistic)",
     "educational_program": "S1 Paralel (S1 Paralel)"
+  },
+  "01.00.19.01": {
+    "faculty": "ILMU LINGKUNGAN",
+    "study_program": "Ilmu Lingkungan",
+    "educational_program": "S2 (Graduate Program)"
+  },
+  "02.00.19.01": {
+    "faculty": "ILMU LINGKUNGAN",
+    "study_program": "Ilmu Lingkungan",
+    "educational_program": "S3 (Doctoral Program)"
+  },
+  "03.00.19.01": {
+    "faculty": "ILMU LINGKUNGAN",
+    "study_program": "Manajemen Bencana",
+    "educational_program": "S2 (Graduate Program)"
+  },
+  "01.00.20.01": {
+    "faculty": "KAJIAN STRATEJIK DAN GLOBAL",
+    "study_program": "Kajian Ketahanan Nasional (National Resilience)",
+    "educational_program": "S2 (Graduate Program)"
+  },
+  "02.00.20.01": {
+    "faculty": "KAJIAN STRATEJIK DAN GLOBAL",
+    "study_program": "Kajian Ilmu Kepolisian (Police Studies)",
+    "educational_program": "S2 (Graduate Program)"
+  },
+  "03.00.20.01": {
+    "faculty": "KAJIAN STRATEJIK DAN GLOBAL",
+    "study_program": "Kajian Gender (Gender Studies)",
+    "educational_program": "S2 (Graduate Program)"
+  },
+  "04.00.20.01": {
+    "faculty": "KAJIAN STRATEJIK DAN GLOBAL",
+    "study_program": "Kajian Wilayah Amerika (American Studies)",
+    "educational_program": "S2 (Graduate Program)"
+  },
+  "05.00.20.01": {
+    "faculty": "KAJIAN STRATEJIK DAN GLOBAL",
+    "study_program": "Kajian Wilayah Eropa (European Studies)",
+    "educational_program": "S2 (Graduate Program)"
+  },
+  "06.00.20.01": {
+    "faculty": "KAJIAN STRATEJIK DAN GLOBAL",
+    "study_program": "Kajian Wilayah Jepang (Japanese Studies)",
+    "educational_program": "S2 (Graduate Program)"
+  },
+  "07.00.20.01": {
+    "faculty": "KAJIAN STRATEJIK DAN GLOBAL",
+    "study_program": "Kajian Wilayah Timur Tengah dan Islam (Islamics & Middle Eastern Studies)",
+    "educational_program": "S2 (Graduate Program)"
+  },
+  "08.00.20.01": {
+    "faculty": "KAJIAN STRATEJIK DAN GLOBAL",
+    "study_program": "Kajian Pengembangan Perkotaan (Urban Studies)",
+    "educational_program": "S2 (Graduate Program)"
+  },
+  "09.00.20.01": {
+    "faculty": "KAJIAN STRATEJIK DAN GLOBAL",
+    "study_program": "Kajian Terorisme",
+    "educational_program": "S2 (Graduate Program)"
+  },
+  "10.00.20.01": {
+    "faculty": "KAJIAN STRATEJIK DAN GLOBAL",
+    "study_program": "Kajian Stratejik dan Global",
+    "educational_program": "S3 (Doctoral Program)"
   }
 }

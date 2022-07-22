@@ -10,10 +10,35 @@ from app.jwt_utils import decode_token
 from app.services.scrapper.schedule_scrapper import ScheduleScrapperServices
 from models.period import Period
 from models.user import User
+from models.major import Major
 from models.user_schedule import UserSchedule
 from app.utils import get_user_id, get_app_config
 
 router_main = Blueprint('router_sunjad', __name__)
+
+"""
+Provides course list by major kd_org.
+The kd_org list is provided in sso/additional_info.json
+"""
+@router_main.route('/majors/<major_kd_org>/courses_by_kd', methods=['GET'])
+@require_jwt_token
+def get_courses_by_kd(major_kd_org):
+    active_period = get_app_config("ACTIVE_PERIOD")
+    major_id = Major.objects(
+        kd_org=major_kd_org
+    ).first().id
+    period = Period.objects(
+        major_id=major_id,
+        name=active_period,
+        is_detail=True
+    ).first()
+    if period is None:
+        period = Period.objects(
+            major_id=major_id,
+            name=active_period,
+            is_detail=False
+        ).first()
+    return (jsonify(period.serialize()), 200)
 
 
 @router_main.route('/majors/<major_id>/courses', methods=['GET'])
@@ -33,6 +58,16 @@ def get_courses(major_id):
         ).first()
     return (jsonify(period.serialize()), 200)
 
+"""
+Provides all course list available in database.
+"""
+@router_main.route('/periods', methods=['GET'])
+def get_list_period():
+    period = Period.objects().all()
+    data = []
+    for p in period:
+        data.append(p.serialize())
+    return(jsonify(period.serialize()), 200)
 
 @router_main.route('/users/<user_id>/user_schedule', methods=['POST'])
 @require_jwt_token

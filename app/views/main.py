@@ -24,20 +24,25 @@ The kd_org list is provided in sso/additional_info.json
 @require_jwt_token
 def get_courses_by_kd(major_kd_org):
     active_period = get_app_config("ACTIVE_PERIOD")
-    major_id = Major.objects(
+    major = Major.objects(
         kd_org=major_kd_org
-    ).first().id
+    ).first()
+    if major is None: # there is still no user from desired major that already use update matkul
+        return ({}, 200)
     period = Period.objects(
-        major_id=major_id,
+        major_id=major.id,
         name=active_period,
         is_detail=True
     ).first()
-    if period is None:
+    if period is None: # alternatives, check from different scraping method, currently not used
         period = Period.objects(
-            major_id=major_id,
+            major_id=major.id,
             name=active_period,
             is_detail=False
         ).first()
+    if period is None: # if still not exist, user from the desired major must scrape the course first
+        return ({}, 200)
+
     return (jsonify(period.serialize()), 200)
 
 

@@ -5,6 +5,8 @@ from flask import Flask
 from flask_cors import CORS
 from flask_mongoengine import MongoEngine
 import json
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
 from dotenv import load_dotenv
 
 from app.message_queue import init_pika
@@ -19,6 +21,12 @@ from pathlib import Path
 load_dotenv()
 
 base_dir = Path(__file__).resolve().parent.parent
+
+sentry_sdk.init(
+    dsn=os.environ.get("SENTRY_DSN", ""),
+    integrations=[FlaskIntegration()],
+    traces_sample_rate=0.5,
+)
 
 app = Flask(__name__, instance_relative_config=True)
 

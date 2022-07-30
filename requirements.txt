@@ -27,3 +27,4 @@ typing-extensions==3.10.0.0
 urllib3==1.25.11
 Werkzeug==2.0.1
 WTForms==2.3.3
+sentry-sdk[flask]==1.9.0

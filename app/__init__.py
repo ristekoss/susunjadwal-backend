@@ -23,7 +23,7 @@ load_dotenv()
 base_dir = Path(__file__).resolve().parent.parent
 
 sentry_sdk.init(
-    dsn=os.getenv("SENTRY_DSN") or "",
+    dsn=os.environ.get("SENTRY_DSN", ""),
     integrations=[FlaskIntegration()],
     traces_sample_rate=0.5,
 )

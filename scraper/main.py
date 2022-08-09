@@ -34,7 +34,7 @@ def scrape_courses_with_credentials(period, username, password):
     courses = create_courses(r.text, is_detail=True)
     return courses
 
-
+    
 def scrape_courses(major_kd_org, period, skip_not_detail=False):
     username, password = fetch_credential(major_kd_org)
     if (username is not None) and (password is not None):
@@ -163,14 +163,17 @@ def create_courses(html, is_detail=False):
                 schedules[-1] = schedules[-1].replace('</td>', '')
 
                 rooms = str(sib.contents[11]).split('<br/>')
-                if is_detail:
-                    rooms[0] = rooms[0].replace('<td>', '')
-                else:
-                    rooms[0] = rooms[0].replace('<td class="ce">', '')
+                # Remove possible tags
+                rooms[0] = rooms[0].replace('<td>', '')
+                rooms[0] = rooms[0].replace('<td class="ce">', '')
+                rooms[0] = rooms[0].replace('<td class="ce inf">', '')
                 rooms[-1] = rooms[-1].replace('</td>', '')
 
+                print(str(sib.contents[13]))
                 lecturers = str(sib.contents[13]).split('<br/>')
                 lecturers[0] = lecturers[0].replace('<td>', '')
+                lecturers[0] = lecturers[0].replace('<td class="ce">', '')
+                lecturers[0] = lecturers[0].replace('<td class="ce inf">', '')
                 lecturers[-1] = lecturers[-1].replace('</td>', '')
                 lecturers = [l.lstrip('-') for l in lecturers]
 

@@ -169,7 +169,6 @@ def create_courses(html, is_detail=False):
                 rooms[0] = rooms[0].replace('<td class="ce inf">', '')
                 rooms[-1] = rooms[-1].replace('</td>', '')
 
-                print(str(sib.contents[13]))
                 lecturers = str(sib.contents[13]).split('<br/>')
 
                 # Cover special case in term 2022/1

@@ -171,6 +171,10 @@ def create_courses(html, is_detail=False):
 
                 print(str(sib.contents[13]))
                 lecturers = str(sib.contents[13]).split('<br/>')
+
+                # Cover special case in term 2022/1
+                if len(lecturers) > 1 and "sampai" in lecturers[-1]:
+                    lecturers = [' '.join(lecturers)]
                 lecturers[0] = lecturers[0].replace('<td>', '')
                 lecturers[0] = lecturers[0].replace('<td class="ce">', '')
                 lecturers[0] = lecturers[0].replace('<td class="ce inf">', '')

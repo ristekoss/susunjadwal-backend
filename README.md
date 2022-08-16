@@ -105,3 +105,8 @@ location ^~ /susunjadwal/api {
 ## License
 
 See LICENSE.md. This software actually goes a long way back, thank you so much to everyone involved.
+
+
+### Infrastructure model
+
+![Insfrastructure model](.infragenie/infrastructure_model.png)

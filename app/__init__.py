@@ -25,6 +25,8 @@ base_dir = Path(__file__).resolve().parent.parent
 sentry_sdk.init(
     dsn=os.environ.get("SENTRY_DSN", ""),
     integrations=[FlaskIntegration()],
+    send_default_pii=True,
+    attach_stacktrace=True,
     traces_sample_rate=0.5,
 )
 

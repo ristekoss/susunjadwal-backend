@@ -170,7 +170,6 @@ def edit_user_schedule(user_id, user_schedule_id):
 @router_main.route('/scrape-schedule', methods=['POST'])
 @require_jwt_token
 def scrap_all_schedule():
-    print(datetime.datetime.utcnow())
     header_data = request.headers
     user_data = decode_token(header_data["Authorization"].split()[1])
     user: User = User.objects(id=user_data['user_id']).first()
@@ -182,7 +181,6 @@ def scrap_all_schedule():
         username=username,
         password=password
     )
-    print(datetime.datetime.utcnow())
     return jsonify(response), status_code
 
 @router_main.route('/courses', methods=['GET'])

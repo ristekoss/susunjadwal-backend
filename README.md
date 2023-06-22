@@ -28,7 +28,7 @@ Feel free to contribute by submitting a pull request.
 
 ## Requirements
 
-1. `python` and `pip`
+1. `python 3.6` and `pip using`
 2. `docker`
 
 ## Configuration
@@ -70,6 +70,7 @@ db.createUser(
     }
 );
 ```
+
 You can quit mongo console now by using Ctrl + D.
 
 9. Create config file, `instance/config.cfg`. You can see `instance/config.template.cfg` for example and edit db name, username, and password to match the one you created before
@@ -80,11 +81,12 @@ You can quit mongo console now by using Ctrl + D.
 ### Production
 
 #### Old
+
 > We actually have a slightly different setup in the real Ristek server. For future maintainers, you may want to contact past contributors.
 
 1. Do everything in development step **except** step no 10, running Flask. Don't forget to modify `instance/config.cfg`, `start_db.sh`, and `scraper/credentials.json` if you want to
-3. Run gunicorn using `bash start.sh`
-4. Set your Nginx (or other reverse proxy of your choice) to reverse proxy to `sunjad.sock`. For example, to reverse proxy `/susunjadwal/api` you can set
+2. Run gunicorn using `bash start.sh`
+3. Set your Nginx (or other reverse proxy of your choice) to reverse proxy to `sunjad.sock`. For example, to reverse proxy `/susunjadwal/api` you can set
 
 ```
 location ^~ /susunjadwal/api {
@@ -95,12 +97,31 @@ location ^~ /susunjadwal/api {
     proxy_pass http://unix:/path/to/susunjadwal/backend/sunjad.sock;
 }
 ```
+
 4. Run the schedule scrapper cron job using `crontab -e` and add the line to run `cron.sh`. For example, to run it every 10 minutes add `*/10 * * * * bash /path/to/susunjadwal/backend/cron.sh`
 
 #### New
-1. Do everything in development step **except** step no 10, running Flask.
+
+**notes**: For deployment, SusunJadwal Backend is using **Ubuntu 18.04**. Here's the link to the marketplace https://aws.amazon.com/marketplace/pp/prodview-pkjqrkcfgcaog
+
+1. Do everything in development step **except** step no 5,6,7, and 10
 2. Create `config.cfg` and fill the DB credentials according the given specification in `docker-compose-deploy.yaml` (host must be `mongo`)
-3. Run `docker-compose -f docker-compose-deploy.yaml up -d` to execute all
+3. Run `docker-compose -f docker-compose-deploy.yaml up -d` to execute mongodb, flask, and rabbitmq
+4. Run `docker exec -it susunjadwalbackend_mongo mongo -u root-user -p root-user` and create admin in `backend` db, then restart the mongo container
+
+## Dump and Restore Database
+
+### Dump
+
+1. Run `bash mongo_dump.sh`
+2. The result will be on ./mongodump
+
+## Restore
+
+If you want to restore the database from .dump file
+
+1. Copy dump file to mongo container, `docker cp <path_to_dump_file> susunjadwalbackend_mongo_1:/<path_to_dump_file>`
+2. Restore db using command, `docker exec -it susunjadwalbackend_mongo_1  mongorestore -u root-user -p root-user --archive=<file.dump>`
 
 ## License
 

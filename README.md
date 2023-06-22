@@ -114,7 +114,7 @@ location ^~ /susunjadwal/api {
 ### Dump
 
 1. Run `bash mongo_dump.sh`
-2. The result will be on ./mongodump
+2. The result will be on `./mongodump`
 
 ## Restore
 

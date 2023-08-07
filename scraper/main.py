@@ -32,6 +32,11 @@ def scrape_courses_with_credentials(period, username, password):
     r = req.get(CHANGEROLE_URL)
     r = req.get(DETAIL_SCHEDULE_URL.format(period=period))
     courses = create_courses(r.text, is_detail=True)
+    counter=0
+    for course in courses:
+        print("course", counter, "of", len(courses))
+        print(course.serialize())
+        counter+=1
     return courses
 
     
@@ -210,5 +215,5 @@ def create_courses(html, is_detail=False):
                 course_code=course_code,
                 curriculum=curriculum
             ))
-
+    print("scraped classes:", classes)
     return courses

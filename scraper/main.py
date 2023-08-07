@@ -32,6 +32,15 @@ def scrape_courses_with_credentials(period, username, password):
     r = req.get(CHANGEROLE_URL)
     r = req.get(DETAIL_SCHEDULE_URL.format(period=period))
     courses = create_courses(r.text, is_detail=True)
+    print("===============================")
+    print("this is r.text:")
+    print(r.text)
+    counter=0
+    for course in courses:
+        print("course", counter, "of", len(courses))
+        print(course.serialize())
+        print("===============================")
+        counter+=1
     return courses
 
     
@@ -137,6 +146,9 @@ def create_courses(html, is_detail=False):
     else:
         classes = soup.find_all('th', class_='sub border2 pad1')
 
+    print("===========================")
+    print("this is classes value: ")
+    print(classes)
     courses = []
     for class_ in classes:
         course_name = class_.strong.text
@@ -210,5 +222,4 @@ def create_courses(html, is_detail=False):
                 course_code=course_code,
                 curriculum=curriculum
             ))
-
     return courses

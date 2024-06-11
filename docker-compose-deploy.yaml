@@ -19,7 +19,7 @@ services:
       MONGO_INITDB_PASSWORD: user
       MONGO_INITDB_DATABASE: backend
     volumes:
-      - ./db:/data/db
+      - sunjad_db:/data/db
 
   server:
     build:
@@ -29,15 +29,14 @@ services:
     depends_on:
       - rmq
       - mongo
-    environment:
-      - RABBIT_HOST=rmq
-      - RABBIT_USERNAME=guest
-      - RABBIT_PASSWORD=guest
-      - SENTRY_DSN=https://475eb8f60aaf49edab8e8264fdf19b9b@o1164500.ingest.sentry.io/6312687
+    env_file:
+      - .env
     ports:
       - "8000:8000"
     volumes:
-      - ./instance/config.cfg:/opt/app/instance/config.cfg
       - ./sso/additional-info.json:/opt/app/sso/additional-info.json
       - ./sso/faculty-base-additional-info.json:/opt/app/sso/faculty-base-additional-info.json
       - ./sso/faculty_exchange_route.json:/opt/app/sso/faculty_exchange_route.json
+
+volumes:
+  sunjad_db:

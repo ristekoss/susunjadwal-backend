@@ -67,17 +67,31 @@ if __name__ != "__main__" and os.environ.get("FLASK_ENV") != "development":
     app.logger.handlers = gunicorn_logger.handlers
     app.logger.setLevel(gunicorn_logger.level)
 
-app.config.from_pyfile("config.cfg")
+# Get "instance" configuration from env
+app.config.from_mapping(
+    SECRET_KEY=os.environ.get("SECRET_KEY"),
+    ACTIVE_PERIOD=os.environ.get("ACTIVE_PERIOD"),
+    SSO_UI_FORCE_HTTPS=True if os.environ.get("SSO_UI_FORCE_HTTPS").lower() == "true" else False,
+    MONGODB_DB=os.environ.get("MONGODB_DB"),
+    MONGODB_HOST=os.environ.get("MONGODB_HOST"),
+    MONGODB_PORT=int(os.environ.get("MONGODB_PORT")),
+    MONGODB_USERNAME=os.environ.get("MONGODB_USERNAME"),
+    MONGODB_PASSWORD=os.environ.get("MONGODB_PASSWORD"),
+    UPDATE_COURSE_LIST_EXCHANGE_NAME=os.environ.get("UPDATE_COURSE_LIST_EXCHANGE_NAME"),
+    SENTRY_DSN=os.environ.get("SENTRY_DSN"),
+)
+
 app.register_blueprint(router_auth, url_prefix=app.config["BASE_PATH"])
 app.register_blueprint(router_main, url_prefix=app.config["BASE_PATH"])
 app.register_blueprint(router_uploader, url_prefix=app.config["BASE_PATH"])
 app.register_blueprint(cron)
 
 CORS(app)
+# print(f'MONGODB_DB:{os.environ.get("MONGODB_DB")}, MONGODB_PORT:{os.environ.get("MONGODB_PORT")}, MONGODB_USERNAME:{os.environ.get("MONGODB_USERNAME")} sad')
 MongoEngine(app)
 
-
 # Init connection to rabbit mq
+# print(f'RABBIT HOST: {os.environ.get("RABBIT_HOST")}, RABBIT USERNAME: {os.environ.get("RABBIT_USERNAME")}')
 init_pika(app)
 
 # Init consumer and create exchange

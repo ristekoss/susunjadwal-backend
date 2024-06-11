@@ -74,7 +74,7 @@ def get_list_period():
     data = []
     for p in period:
         data.append(p.serialize())
-    return(jsonify(period.serialize()), 200)
+    return(jsonify(period), 200)
 
 @router_main.route('/users/<user_id>/user_schedule', methods=['POST'])
 @require_jwt_token

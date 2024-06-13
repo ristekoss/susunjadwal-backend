@@ -1,0 +1,21 @@
+name: Deploy (Staging)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  stg_build_and_deploy:
+    name: (Staging) Build and Deploy
+    uses: RistekCSUI/infra/.github/workflows/ecr-service-build.yml@main
+    with:
+      SERVICES: susunjadwal/susunjadwal-backend-stg
+      REGISTRY: 638207107223.dkr.ecr.ap-southeast-1.amazonaws.com
+      REGISTRY_IMAGE: susunjadwal-backend
+      REGISTRY_USER: AWS
+      PLATFORMS: linux/amd64
+      IMAGE_TAG: latest
+      AWS_REGION: ap-southeast-1
+    secrets:
+      GH_TOKEN: ${{ secrets.CENTRAL_INFRA_GH_TOKEN }}
+      AWS_ECR_ACCESS_KEY: ${{ secrets.AWS_ECR_ACCESS_KEY }}
+      AWS_ECR_SECRET_KEY: ${{ secrets.AWS_ECR_SECRET_KEY }}

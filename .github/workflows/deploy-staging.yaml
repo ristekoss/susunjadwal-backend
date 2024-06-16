@@ -8,14 +8,14 @@ on:
 
 jobs:
   build_and_push:
-    name: Build and Push Image to DockerHub
+    name: Build and Push Image to Dockerhub
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+      - name: Log in to Dockerhub
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -26,14 +26,14 @@ jobs:
       #   with:
       #     images: my-docker-hub-namespace/my-docker-hub-repository
 
-      - name: Build and push Docker image
+      - name: Build and push Image
         id: push
-        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: ./Dockerfile
           push: true
-          tags: susunjadwal-backend
+          tags: ristekoss/susunjadwal-backend
           labels: staging
 
   # deploy_service:

@@ -2,20 +2,72 @@ name: Deploy (Staging)
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+    - "devops-fix"
 
 jobs:
-  stg_build_and_deploy:
-    name: (Staging) Build and Deploy
-    uses: RistekCSUI/infra/.github/workflows/ecr-service-build.yml@main
-    with:
-      SERVICES: susunjadwal/susunjadwal-backend-stg
-      REGISTRY: 638207107223.dkr.ecr.ap-southeast-1.amazonaws.com
-      REGISTRY_IMAGE: susunjadwal-backend
-      REGISTRY_USER: AWS
-      PLATFORMS: linux/amd64
-      IMAGE_TAG: latest
-      AWS_REGION: ap-southeast-1
-    secrets:
-      GH_TOKEN: ${{ secrets.CENTRAL_INFRA_GH_TOKEN }}
-      AWS_ECR_ACCESS_KEY: ${{ secrets.AWS_ECR_ACCESS_KEY }}
-      AWS_ECR_SECRET_KEY: ${{ secrets.AWS_ECR_SECRET_KEY }}
+  build_and_push:
+    name: Build and Push Image to DockerHub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # - name: Extract metadata (tags, labels) for Docker
+      #   id: meta
+      #   uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+      #   with:
+      #     images: my-docker-hub-namespace/my-docker-hub-repository
+
+      - name: Build and push Docker image
+        id: push
+        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: susunjadwal-backend-stg
+          labels: latest
+
+  # deploy_service:
+  #   name: Deploy Service
+  #   runs-on: ubuntu-22.04
+  #   steps:
+  #     - name: Checkout sources
+  #       uses: actions/checkout@v4
+
+  #     - name: Setup Python
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: 3.11.3
+
+  #     - name: Install dependencies
+  #       run: |
+  #         python -m pip install --upgrade pip
+  #         pip install -r requirements.txt
+
+  #     - name: Setup Infisical
+  #       run: |
+  #         curl -1sLf \
+  #           'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.deb.sh' \
+  #           | sudo -E bash
+  #         sudo apt-get update && sudo apt-get install -y infisical
+
+  #     - name: Get Infisical Token
+  #       id: get-infisical-token
+  #       run: |
+  #         INFISICAL_TOKEN=$(infisical login --method universal-auth --client-id ${{ secrets.INFISICAL_CLIENT_ID }} --client-secret ${{ secrets.INFISICAL_CLIENT_SECRET }} --silent --plain)
+  #         echo "infisical-token=$INFISICAL_TOKEN" >> "$GITHUB_OUTPUT"
+
+  #     - name: Execute Setup
+  #       run: python3 ./deploy/setup.py susunjadwal-backend-stg
+  #       env:
+  #         INFISICAL_TOKEN: ${{ steps.get-infisical-token.outputs.infisical-token }}
+  #         SSH_TIMEOUT: 30

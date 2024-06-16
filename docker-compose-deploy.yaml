@@ -23,7 +23,7 @@ services:
 
   server:
     build:
-      dockerfile: Server-Dockerfile
+      dockerfile: Dockerfile
       context: .
     restart: always
     depends_on:

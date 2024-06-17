@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  susunjadwal-rmq-stg:
+    restart: unless-stopped
+    image: rabbitmq:management-alpine
+    ports:
+      - "15671-15672:15671-15672"
+
+  susunjadwal-mongo-stg:
+    image: mongo:7
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+      MONGO_INITDB_USERNAME: ${MONGODB_USERNAME}
+      MONGO_INITDB_PASSWORD: ${MONGODB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGODB_DB}
+    volumes:
+      - susunjadwal-mongo-stg:/data/db
+    ports:
+      - 27017:27017
+    networks:
+      - public-web
+
+  susunjadwal-backend-stg:
+    image: 638207107223.dkr.ecr.ap-southeast-1.amazonaws.com/susunjadwal-backend:latest
+    container_name: "${APP_NAME}_app"
+    labels:
+      caddy: stg.api.susunjadwal.ristek.cs.ui.ac.id
+      caddy.handle: /v1/*
+      caddy.handle.reverse_proxy: "{{upstreams 8005}}"
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - 8005:8000
+    networks:
+      - public-web
+    depends_on:
+      - susunjadwal-mongo-stg
+      - susunjadwal-rmq-stg
+
+networks:
+  public-web:
+    external: true
+
+volumes:
+  susunjadwal-mongo-stg:
+    external: true

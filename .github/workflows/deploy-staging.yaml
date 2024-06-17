@@ -33,41 +33,62 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ristekoss/susunjadwal-backend
-          labels: staging
+          tags: ristekoss/susunjadwal-backend:staging
 
-  # deploy_service:
-  #   name: Deploy Service
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - name: Checkout sources
-  #       uses: actions/checkout@v4
+  deploy_service:
+    needs: build_and_push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
 
-  #     - name: Setup Python
-  #       uses: actions/setup-python@v5
-  #       with:
-  #         python-version: 3.11.3
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11.3
 
-  #     - name: Install dependencies
-  #       run: |
-  #         python -m pip install --upgrade pip
-  #         pip install -r requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-  #     - name: Setup Infisical
-  #       run: |
-  #         curl -1sLf \
-  #           'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.deb.sh' \
-  #           | sudo -E bash
-  #         sudo apt-get update && sudo apt-get install -y infisical
+      - name: Setup Infisical
+        run: |
+          curl -1sLf \
+            'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.deb.sh' \
+            | sudo -E bash
+          sudo apt-get update && sudo apt-get install -y infisical
 
-  #     - name: Get Infisical Token
-  #       id: get-infisical-token
-  #       run: |
-  #         INFISICAL_TOKEN=$(infisical login --method universal-auth --client-id ${{ secrets.INFISICAL_CLIENT_ID }} --client-secret ${{ secrets.INFISICAL_CLIENT_SECRET }} --silent --plain)
-  #         echo "infisical-token=$INFISICAL_TOKEN" >> "$GITHUB_OUTPUT"
+      - name: Get Infisical Token
+        id: get-infisical-token
+        run: |
+          INFISICAL_TOKEN=$(infisical login --method universal-auth --client-id ${{ secrets.INFISICAL_CLIENT_ID }} --client-secret ${{ secrets.INFISICAL_CLIENT_SECRET }} --silent --plain)
+          echo "infisical-token=$INFISICAL_TOKEN" >> "$GITHUB_OUTPUT"
 
-  #     - name: Execute Setup
-  #       run: python3 ./deploy/setup.py susunjadwal-backend-stg
-  #       env:
-  #         INFISICAL_TOKEN: ${{ steps.get-infisical-token.outputs.infisical-token }}
-  #         SSH_TIMEOUT: 30
+      - name: Load Infisical Secrets
+        run: python3 ./deploy-stg/new_setup.py
+        env:
+          INFISICAL_TOKEN: ${{ steps.get-infisical-token.outputs.infisical-token }}
+          SSH_TIMEOUT: 20
+
+      - name: SSH and Prepare Working Directory
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_IP_ADDRESS }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY}}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            ls -al
+            mkdir -pv susunjadwal/susunjadwal-backend-stg
+
+      - name: RSync Files to Server
+        uses: burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avzr --progress
+          path: deploy-stg/
+          remote_path: susunjadwal/susunjadwal-backend-stg
+          remote_host: ${{ secrets.SSH_IP_ADDRESS }}
+          remote_user: ${{ secrets.SSH_USER }}
+          remote_key: ${{ secrets.SSH_KEY }}
+

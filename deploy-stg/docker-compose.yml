@@ -1,13 +1,15 @@
 version: "3.9"
 
 services:
-  rmq-stg:
+  susunjadwal-backend-rmq-stg:
     image: rabbitmq:management-alpine
     restart: unless-stopped
     ports:
       - "15671-15672:15671-15672"
+    networks:
+      - public-web
 
-  mongo-stg:
+  susunjadwal-backend-mongo-stg:
     image: mongo:7
     restart: unless-stopped
     environment:
@@ -18,17 +20,28 @@ services:
       MONGO_INITDB_DATABASE: backend
     volumes:
       - sunjad_db:/data/db
+    networks:
+      - public-web
 
-  server-stg:
+  susunjadwal-backend-server-stg:
     image: ristekoss/susunjadwal-backend:staging
+    labels:
+      caddy: api-stg.susunjadwal.ristek.cs.ui.ac.id
+      caddy.reverse_proxy: "{{upstreams 8000}}"
     restart: unless-stopped
     depends_on:
       - rmq-stg
       - mongo-stg
-    env_file:
-      - .env
+    volumes:
+      - ./.env:/app/.env:ro
     ports:
-      - "8000:8000"
+      - 8005:8005
+    networks:
+      - public-web
+
+networks:
+  public-web:
+    external: true
 
 volumes:
   sunjad_db:

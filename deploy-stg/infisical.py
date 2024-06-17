@@ -58,11 +58,12 @@ if infisical_filepath.is_file():
       # Load secret as .env file
       logger.info("Loading secrets as .env file")
 
+      env_path = '/susunjadwal/susunjadwal-backend-stg/'
       subprocess.call(
-          f"infisical export --projectId {project_id} --env {env} --path {path}".split(
+          f"infisical export --projectId {project_id} --env {env} --path {env_path}".split(
               " "
           ),
-          stdout=open(Path(".") / ".env", "w"),
+          stdout=open(Path("deploy-stg") / ".env", "w"),
           stderr=sys.stderr,
       )
 
@@ -70,7 +71,7 @@ if infisical_filepath.is_file():
       if not quoted:
           logger.info("Exports are quoted. Running alt logic")
           # Read each variable and strip the quotes
-          with open(Path(".") / ".env", "r+") as secret_envs:
+          with open(Path("deploy-stg") / ".env", "r+") as secret_envs:
               quoted_vars = []
               for secret in secret_envs:
                   secret = secret.strip()
@@ -82,6 +83,6 @@ if infisical_filepath.is_file():
                   quoted_vars.append(f"{key}={value}")
 
           # Write the contents of quoted vars to the .env file
-          with open(Path(".") / ".env", "w+") as env_file:
+          with open(Path("deploy-stg") / ".env", "w+") as env_file:
               for var in quoted_vars:
                   env_file.write(var + "\n")

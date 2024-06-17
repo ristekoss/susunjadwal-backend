@@ -36,6 +36,7 @@ jobs:
           tags: ristekoss/susunjadwal-backend:staging
 
   deploy_service:
+    name: Load Secrets and Deploy Service
     needs: build_and_push
     runs-on: ubuntu-latest
     steps:
@@ -85,7 +86,6 @@ jobs:
           key: ${{ secrets.SSH_KEY_OVERRIDE }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            ls -al
             mkdir -pv susunjadwal/susunjadwal-backend-stg
 
       - name: RSync Files to Server

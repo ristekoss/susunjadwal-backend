@@ -57,10 +57,8 @@ if infisical_filepath.is_file():
 
       # Load secret as .env file
       logger.info("Loading secrets as .env file")
-
-      env_path = '/susunjadwal/susunjadwal-backend-stg/'
       subprocess.call(
-          f"infisical export --projectId {project_id} --env {env} --path {env_path}".split(
+          f"infisical export --projectId {project_id} --env {env}".split(
               " "
           ),
           stdout=open(Path("deploy-stg") / ".env", "w"),

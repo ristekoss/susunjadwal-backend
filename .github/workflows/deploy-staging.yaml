@@ -40,19 +40,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
+        id: checkout-sources
         uses: actions/checkout@v4
 
       - name: Setup Python
+        id: setup-python
         uses: actions/setup-python@v5
         with:
           python-version: 3.11.3
 
-      - name: Install dependencies
+      - name: Install Python Dependencies
+        id: install-py-dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r deploy-stg/requirements.txt
 
       - name: Setup Infisical
+        id: setup-infisical
         run: |
           curl -1sLf \
             'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.deb.sh' \
@@ -66,23 +70,26 @@ jobs:
           echo "infisical-token=$INFISICAL_TOKEN" >> "$GITHUB_OUTPUT"
 
       - name: Load Infisical Secrets
-        run: python3 ./deploy-stg/new_setup.py
+        id: load-infisical-secrets
+        run: python3 ./deploy-stg/infisical.py
         env:
           INFISICAL_TOKEN: ${{ steps.get-infisical-token.outputs.infisical-token }}
           SSH_TIMEOUT: 20
 
       - name: SSH and Prepare Working Directory
+        id: ssh-prep-directory
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_IP_ADDRESS }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY}}
+          key: ${{ secrets.SSH_KEY_OVERRIDE }}
           port: ${{ secrets.SSH_PORT }}
           script: |
             ls -al
             mkdir -pv susunjadwal/susunjadwal-backend-stg
 
       - name: RSync Files to Server
+        id: rsync-to-server
         uses: burnett01/rsync-deployments@7.0.1
         with:
           switches: -avzr --progress
@@ -90,5 +97,5 @@ jobs:
           remote_path: susunjadwal/susunjadwal-backend-stg
           remote_host: ${{ secrets.SSH_IP_ADDRESS }}
           remote_user: ${{ secrets.SSH_USER }}
-          remote_key: ${{ secrets.SSH_KEY }}
+          remote_key: ${{ secrets.SSH_KEY_OVERRIDE }}
 

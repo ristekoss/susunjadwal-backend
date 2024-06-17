@@ -1,13 +1,13 @@
 version: "3.9"
 
 services:
-  rmq-stg:
+  rmq:
     image: rabbitmq:management-alpine
     restart: unless-stopped
     ports:
       - "15671-15672:15671-15672"
 
-  mongo-stg:
+  mongo:
     image: mongo:7
     restart: unless-stopped
     environment:
@@ -19,12 +19,14 @@ services:
     volumes:
       - sunjad_db:/data/db
 
-  server-stg:
-    image: ristekoss/susunjadwal-backend:staging
+  server:
+    build:
+      dockerfile: Dockerfile
+      context: .
     restart: unless-stopped
     depends_on:
-      - rmq-stg
-      - mongo-stg
+      - rmq
+      - mongo
     env_file:
       - .env
     ports:

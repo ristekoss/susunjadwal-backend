@@ -62,14 +62,15 @@ if infisical_filepath.is_file():
           f"infisical export --projectId {project_id} --env {env} --path {path}".split(
               " "
           ),
-          stdout=open(Path("deploy-stg") / ".env", "w"),
+          stdout=open(Path(".") / ".env", "w"),
           stderr=sys.stderr,
       )
 
       # Strip quotes if not quoted (Infisical exports for .env by default is quoted)
       if not quoted:
+          logger.info("Exports are quoted. Running alt logic")
           # Read each variable and strip the quotes
-          with open(Path("deploy-stg") / ".env", "r+") as secret_envs:
+          with open(Path(".") / ".env", "r+") as secret_envs:
               quoted_vars = []
               for secret in secret_envs:
                   secret = secret.strip()
@@ -81,6 +82,6 @@ if infisical_filepath.is_file():
                   quoted_vars.append(f"{key}={value}")
 
           # Write the contents of quoted vars to the .env file
-          with open(Path("deploy-stg") / ".env", "w+") as env_file:
+          with open(Path(".") / ".env", "w+") as env_file:
               for var in quoted_vars:
                   env_file.write(var + "\n")

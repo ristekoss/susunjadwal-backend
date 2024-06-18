@@ -1,0 +1,20 @@
+name: Deploy (Production)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy_service:
+    name: Deploy Service
+    uses: RistekCSUI/infra-workflows/.github/workflows/dockerhub-service-build.yml@main
+    with:
+      SERVICES: susunjadwal/susunjadwal-backend-prod
+      INSTANCE: Barato
+      IMAGE: susunjadwal-backend
+      DOCKERHUB_USER: ristekoss
+      PLATFORMS: linux/amd64
+      IMAGE_TAG: stable
+    secrets:
+      GH_TOKEN: ${{ secrets.CENTRAL_INFRA_GH_TOKEN }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+

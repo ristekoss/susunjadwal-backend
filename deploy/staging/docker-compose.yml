@@ -36,10 +36,8 @@ services:
     depends_on:
       - rmq-stg
       - mongo-stg
-    # volumes:
-    #   - ./.env:/app/.env:ro
-    env_file:
-      - .env
+    volumes:
+      - ./.env:/opt/app/.env:ro
     ports:
       - 8006:8006
     networks:

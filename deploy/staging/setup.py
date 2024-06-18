@@ -1,5 +1,4 @@
-# An extract of RistekCSUI/Infra repository
-# This code extract is only for Infisical secrets
+# Extracted from RistekCSUI/Infra/setup.py
 
 import os
 import sys

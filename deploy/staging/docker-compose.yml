@@ -30,7 +30,7 @@ services:
     #   dockerfile: Dockerfile
     #   context: ..
     labels:
-      caddy: api-stg.susunjadwal.ristek.cs.ui.ac.id
+      caddy: api-stg.susunjadwal.cs.ui.ac.id
       caddy.reverse_proxy: "{{upstreams 8006}}"
     restart: unless-stopped
     depends_on:

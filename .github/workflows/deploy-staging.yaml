@@ -5,6 +5,7 @@ on:
   push:
     branches:
     - "devops-fix"
+    - "staging"
 
 jobs:
   build_and_push:
@@ -19,12 +20,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      # - name: Extract metadata (tags, labels) for Docker
-      #   id: meta
-      #   uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-      #   with:
-      #     images: my-docker-hub-namespace/my-docker-hub-repository
 
       - name: Build and push Image
         id: push
@@ -109,5 +104,5 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd susunjadwal/susunjadwal-backend-stg
-            sudo docker compose up
+            sudo docker compose up -d
 

@@ -1,7 +1,7 @@
 version: "3.9"
 
 services:
-  rmq-stg:
+  susunjadwal-backend-rmq-stg:
     image: rabbitmq:management-alpine
     restart: unless-stopped
     ports:
@@ -9,7 +9,7 @@ services:
     networks:
       - public-web
 
-  mongo-stg:
+  susunjadwal-backend-mongo-stg:
     image: mongo:7
     restart: unless-stopped
     environment:
@@ -23,15 +23,16 @@ services:
     networks:
       - public-web
 
-  server-stg:
+  susunjadwal-backend-server-stg:
+    pull_policy: always
     image: ristekoss/susunjadwal-backend:staging
     labels:
       caddy: api-stg.susunjadwal.ristek.cs.ui.ac.id
       caddy.reverse_proxy: "{{upstreams 8006}}"
     restart: unless-stopped
     depends_on:
-      - rmq-stg
-      - mongo-stg
+      - susunjadwal-backend-rmq-stg
+      - susunjadwal-backend-mongo-stg
     # volumes:
     #   - ./.env:/app/.env:ro
     env_file:

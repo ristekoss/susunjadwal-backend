@@ -5,7 +5,7 @@ on:
   push:
     branches:
     - "devops-fix"
-    - "staging"
+    - "master"
 
 jobs:
   deploy_service:
@@ -17,7 +17,7 @@ jobs:
       IMAGE: susunjadwal-backend
       DOCKERHUB_USER: ristekoss
       PLATFORMS: linux/amd64
-      IMAGE_TAG: stable
+      IMAGE_TAG: latest
     secrets:
       GH_TOKEN: ${{ secrets.CENTRAL_INFRA_GH_TOKEN }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}

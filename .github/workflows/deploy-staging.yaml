@@ -12,7 +12,7 @@ jobs:
     name: Deploy Service
     uses: RistekCSUI/infra-workflows/.github/workflows/dockerhub-service-build.yml@main
     with:
-      SERVICES: susunjadwal/susunjadwal-backend
+      SERVICES: susunjadwal/susunjadwal-backend-stg
       INSTANCE: Barato
       IMAGE: susunjadwal-backend
       DOCKERHUB_USER: ristekoss

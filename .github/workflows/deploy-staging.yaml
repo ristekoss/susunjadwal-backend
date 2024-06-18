@@ -49,7 +49,7 @@ jobs:
         id: install-py-dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r deploy/stg/setup-requirements.txt
+          pip install -r deploy/staging/setup-requirements.txt
 
       - name: Setup Infisical
         id: setup-infisical
@@ -67,7 +67,7 @@ jobs:
 
       - name: Load Infisical Secrets
         id: load-infisical-secrets
-        run: python3 ./deploy/stg/setup.py
+        run: python3 ./deploy/staging/setup.py
         env:
           INFISICAL_TOKEN: ${{ steps.get-infisical-token.outputs.infisical-token }}
           SSH_TIMEOUT: 20
@@ -88,7 +88,7 @@ jobs:
         uses: burnett01/rsync-deployments@7.0.1
         with:
           switches: -avzr --progress
-          path: deploy/stg/
+          path: deploy/staging/
           remote_path: susunjadwal/susunjadwal-backend-stg
           remote_host: ${{ secrets.SSH_IP_ADDRESS }}
           remote_user: ${{ secrets.SSH_USER }}

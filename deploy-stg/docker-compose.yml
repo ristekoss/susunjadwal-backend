@@ -24,7 +24,7 @@ services:
       - public-web
 
   server-stg:
-    pull_policy: always
+    # pull_policy: always
     image: ristekoss/susunjadwal-backend:staging
     # build:
     #   dockerfile: Dockerfile

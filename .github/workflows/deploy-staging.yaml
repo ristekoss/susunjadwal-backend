@@ -109,5 +109,5 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd susunjadwal/susunjadwal-backend-stg
-            docker compose up
+            sudo docker compose up
 

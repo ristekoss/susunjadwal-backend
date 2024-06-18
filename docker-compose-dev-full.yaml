@@ -30,7 +30,6 @@ services:
     env_file:
       - .env
     ports:
-      - 8005:8000
-      
+      - 8006:8006
 volumes:
   sunjad_db:

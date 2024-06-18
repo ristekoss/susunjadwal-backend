@@ -17,4 +17,4 @@ RUN apk add -u --no-cache tzdata gcc musl-dev libxml2 libxslt-dev && \
 
 ENV PORT=8006
 
-ENTRYPOINT ["/opt/app","launch.sh"]
+ENTRYPOINT ["/bin/sh","launch.sh"]

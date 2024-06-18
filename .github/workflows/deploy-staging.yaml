@@ -2,10 +2,6 @@ name: Deploy (Staging)
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-    - "devops-fix"
-    - "master"
 
 jobs:
   deploy_service:

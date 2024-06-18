@@ -64,6 +64,7 @@ if infisical_filepath.is_file():
           stdout=open(Path("deploy-stg") / ".env", "w"),
           stderr=sys.stderr,
       )
+      logger.info(f"Initial .env file size: {os.stat(Path("deploy-stg") / ".env").st_size}")
 
       # Strip quotes if not quoted (Infisical exports for .env by default is quoted)
       if not quoted:
@@ -84,3 +85,5 @@ if infisical_filepath.is_file():
           with open(Path("deploy-stg") / ".env", "w+") as env_file:
               for var in quoted_vars:
                   env_file.write(var + "\n")
+                  
+      logger.info(f"Final .env file size: {os.stat(Path("deploy-stg") / ".env").st_size}")

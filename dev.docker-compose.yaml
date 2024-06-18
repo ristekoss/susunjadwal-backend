@@ -1,17 +1,15 @@
-version: "3.3"
+version: "3.9"
 
 services:
   rmq:
-    restart: always
     image: rabbitmq:management-alpine
+    restart: unless-stopped
     ports:
       - "15671-15672:15671-15672"
 
   mongo:
-    restart: always
-    build:
-      dockerfile: MongoDB-Dockerfile
-      context: .
+    image: mongo:7
+    restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: root-user
       MONGO_INITDB_ROOT_PASSWORD: root-user
@@ -23,20 +21,15 @@ services:
 
   server:
     build:
-      dockerfile: Server-Dockerfile
+      dockerfile: Dockerfile
       context: .
-    restart: always
+    restart: unless-stopped
     depends_on:
       - rmq
       - mongo
     env_file:
       - .env
     ports:
-      - "8000:8000"
-    volumes:
-      - ./sso/additional-info.json:/opt/app/sso/additional-info.json
-      - ./sso/faculty-base-additional-info.json:/opt/app/sso/faculty-base-additional-info.json
-      - ./sso/faculty_exchange_route.json:/opt/app/sso/faculty_exchange_route.json
-
+      - 8006:8006
 volumes:
   sunjad_db:

@@ -8,101 +8,17 @@ on:
     - "staging"
 
 jobs:
-  build_and_push:
-    name: Build and Push Image to Dockerhub
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out the repository
-        uses: actions/checkout@v4
-
-      - name: Log in to Dockerhub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push Image
-        id: push
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ristekoss/susunjadwal-backend:staging
-
   deploy_service:
-    name: Load Secrets and Deploy Service
-    needs: build_and_push
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout sources
-        id: checkout-sources
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        id: setup-python
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.11.3
-
-      - name: Install Python Dependencies
-        id: install-py-dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r deploy/staging/setup-requirements.txt
-
-      - name: Setup Infisical
-        id: setup-infisical
-        run: |
-          curl -1sLf \
-            'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.deb.sh' \
-            | sudo -E bash
-          sudo apt-get update && sudo apt-get install -y infisical
-
-      - name: Get Infisical Token
-        id: get-infisical-token
-        run: |
-          INFISICAL_TOKEN=$(infisical login --method universal-auth --client-id ${{ secrets.INFISICAL_CLIENT_ID }} --client-secret ${{ secrets.INFISICAL_CLIENT_SECRET }} --silent --plain)
-          echo "infisical-token=$INFISICAL_TOKEN" >> "$GITHUB_OUTPUT"
-
-      - name: Load Infisical Secrets
-        id: load-infisical-secrets
-        run: python3 ./deploy/staging/setup.py
-        env:
-          INFISICAL_TOKEN: ${{ steps.get-infisical-token.outputs.infisical-token }}
-          SSH_TIMEOUT: 20
-
-      - name: SSH and Prepare Working Directory
-        id: ssh-prep-directory
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_IP_ADDRESS }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY_OVERRIDE }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            mkdir -pv susunjadwal/susunjadwal-backend-stg
-
-      - name: RSync Files to Server
-        id: rsync-to-server
-        uses: burnett01/rsync-deployments@7.0.1
-        with:
-          switches: -avzr --progress
-          path: deploy/staging/
-          remote_path: susunjadwal/susunjadwal-backend-stg
-          remote_host: ${{ secrets.SSH_IP_ADDRESS }}
-          remote_user: ${{ secrets.SSH_USER }}
-          remote_key: ${{ secrets.SSH_KEY_OVERRIDE }}
-
-      - name: SSH and Docker Compose Up
-        id: ssh-docker-compose
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_IP_ADDRESS }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY_OVERRIDE }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            cd susunjadwal/susunjadwal-backend-stg
-            sudo docker compose up -d
+    name: Deploy Service
+    uses: RistekCSUI/infra-workflows/.github/workflows/dockerhub-service-build.yml@main
+    with:
+      SERVICES: susunjadwal/susunjadwal-backend
+      REGISTRY_IMAGE: susunjadwal-backend
+      REGISTRY_USER: ristekoss
+      PLATFORMS: linux/amd64
+      IMAGE_TAG: stable
+    secrets:
+      GH_TOKEN: ${{ secrets.CENTRAL_INFRA_GH_TOKEN }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
 

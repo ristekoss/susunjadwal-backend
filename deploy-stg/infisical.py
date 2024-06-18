@@ -58,7 +58,7 @@ if infisical_filepath.is_file():
       # Load secret as .env file
       logger.info("Loading secrets as .env file")
       subprocess.call(
-          f"infisical export --projectId {project_id} --env {env}".split(
+          f"infisical export --projectId {project_id} --env {env} --path {path}".split(
               " "
           ),
           stdout=open(Path("deploy-stg") / ".env", "w"),

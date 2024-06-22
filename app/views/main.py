@@ -17,6 +17,15 @@ from app.utils import get_user_id, get_app_config
 router_main = Blueprint('router_sunjad', __name__)
 
 """
+Basic ping / status check
+"""
+@router_main.route('/', methods=['GET'])
+def status():
+    return (jsonify({
+        "message": "susunjadwal is live!",
+    }), 200)
+
+"""
 Provides course list by major kd_org.
 The kd_org list is provided in sso/additional_info.json
 """

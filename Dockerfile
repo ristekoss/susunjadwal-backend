@@ -6,7 +6,7 @@ ENV APP_ENV="container"
 
 COPY . .
 
-COPY launch.sh /opt/app/launch.sh
+COPY scripts/launch.sh /opt/app/launch.sh
 COPY sso/additional-info.json /opt/app/sso/additional-info.json
 COPY sso/faculty-base-additional-info.json /opt/app/sso/faculty-base-additional-info.json
 COPY sso/faculty_exchange_route.json /opt/app/sso/faculty_exchange_route.json

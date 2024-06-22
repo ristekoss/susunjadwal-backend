@@ -87,11 +87,9 @@ app.register_blueprint(router_uploader, url_prefix=app.config["BASE_PATH"])
 app.register_blueprint(cron)
 
 CORS(app)
-# print(f'MONGODB_DB:{os.environ.get("MONGODB_DB")}, MONGODB_PORT:{os.environ.get("MONGODB_PORT")}, MONGODB_USERNAME:{os.environ.get("MONGODB_USERNAME")} sad')
 MongoEngine(app)
 
 # Init connection to rabbit mq
-# print(f'RABBIT HOST: {os.environ.get("RABBIT_HOST")}, RABBIT USERNAME: {os.environ.get("RABBIT_USERNAME")}')
 init_pika(app)
 
 # Init consumer and create exchange

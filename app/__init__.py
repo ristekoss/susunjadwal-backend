@@ -18,7 +18,8 @@ from uploader.views import router_uploader
 
 from pathlib import Path
 
-load_dotenv()
+# override = True, to prevent persistent old env vars
+load_dotenv(override=True)
 
 base_dir = Path(__file__).resolve().parent.parent
 
@@ -33,8 +34,6 @@ app = Flask(__name__, instance_relative_config=True)
 # config vars
 app.config["BASE_PATH"] = "/susunjadwal/api"
 app.config["SSO_UI_URL"] = "https://sso.ui.ac.id/cas2/"
-app.config["SECRET_KEY"] = "password"
-app.config["ACTIVE_PERIOD"] = "2018-2"
 app.config["SSO_UI_FORCE_HTTPS"] = False
 app.config["MAX_CONTENT_LENGTH"] = 2 * 1024 * 1024
 app.config["BASE_DIR"] = base_dir

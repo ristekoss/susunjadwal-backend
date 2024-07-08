@@ -17,6 +17,18 @@ def generate_token(user_id, major_id):
 
 
 def extract_header_data(header):
+    '''
+    Returns the decoded user data from a Bearer token, 
+    obtained through the specified headers.
+    
+    Parameters
+    -----
+    headers: dictionary/json
+    
+    Returns
+    -----
+    data: dictionary/json, contains user_id and major_id
+    '''
     try:
         header_type, value = header['Authorization'].split()
         data = decode_token(value)

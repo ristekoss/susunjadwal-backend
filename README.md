@@ -37,7 +37,7 @@ For in-depth discussion, please join RistekOSS's Discord.
 
 ### Requirements
 
-1. `python` (tested on 3.6 and 3.9.18), and `pip`
+1. `python` (3.12.1), and `pip`
 2. `docker`
 
 ### Installing
@@ -85,7 +85,9 @@ While RISTEK uses a different standardized workflow, here is a general guide on 
 
 3. Modify the credentials in `MONGO_INITDB_XX` environment variables.
 
-4. `docker compose up`
+4. Build and push image from `Dockerfile`
+
+5. `docker compose up`
 
 
 

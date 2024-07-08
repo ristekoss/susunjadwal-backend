@@ -152,3 +152,4 @@ dmypy.json
 # End of https://www.gitignore.io/api/flask,visualstudiocode
 
 db
+old_env/

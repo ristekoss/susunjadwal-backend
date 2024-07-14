@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.9"
 
 services:
   rmq:
@@ -6,7 +6,6 @@ services:
     restart: unless-stopped
     ports:
       - "15671-15672:15671-15672"
-      - "5672:5672"
 
   mongo:
     image: mongo:7
@@ -19,8 +18,18 @@ services:
       MONGO_INITDB_DATABASE: backend
     volumes:
       - sunjad_db:/data/db
-    ports:
-      - 27017:27017
 
+  server:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    restart: unless-stopped
+    depends_on:
+      - rmq
+      - mongo
+    volumes:
+      - ./.env:/opt/app/.env:ro
+    ports:
+      - 8006:8006
 volumes:
   sunjad_db:

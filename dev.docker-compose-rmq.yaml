@@ -1,8 +1,0 @@
-version: "3.7"
-
-services:
-  rmq:
-    image: rabbitmq:management-alpine
-    ports:
-      - "15671-15672:15671-15672"
-      - "5672:5672"

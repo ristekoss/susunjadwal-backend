@@ -54,7 +54,9 @@ def get_courses_by_kd(major_kd_org):
 
     return (jsonify(period.serialize()), 200)
 
-
+'''
+Provides course list filtered by major ID.
+'''
 @router_main.route('/majors/<major_id>/courses', methods=['GET'])
 @require_jwt_token
 def get_courses(major_id):
@@ -192,6 +194,27 @@ def scrap_all_schedule():
     )
     return jsonify(response), status_code
 
+'''
+Provides all existing courses, filtered by major ID
+regardless active term/period
+'''
+@router_main.route('/majors/<major_id>/all_courses', methods=['GET'])
+def get_all_courses_by_major(major_id):
+    periods = Period.objects(
+        major_id=major_id
+    ).all()
+    all_courses = []
+    for period in periods:
+        for course in period.courses:
+            all_courses.append(course.serialize_ulas_kelas())
+    return (jsonify({
+        'courses': all_courses
+    }), 200)
+
+'''
+Provides all existing courses
+regardless of major or active term/period
+'''
 @router_main.route('/courses', methods=['GET'])
 def get_all_courses():
     active_period = get_app_config("ACTIVE_PERIOD")

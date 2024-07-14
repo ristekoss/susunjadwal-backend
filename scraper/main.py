@@ -2,7 +2,6 @@ import json
 import os
 import re
 import requests
-import certifi
 
 from bs4 import BeautifulSoup
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
@@ -27,13 +26,11 @@ DETAIL_COURSES_URL = f"{BASE_URL}/Course/Detail?course={{course}}&curr={{curr}}"
 DEFAULT_CREDENTIAL = "01.00.12.01"
 
 def scrape_courses_with_credentials(period, username, password):
-    session = requests.Session()
-    r = session.post(AUTH_URL, data={
-        'u': username,
-        'p': password,
-    }, verify=False)
-    r = session.get(CHANGEROLE_URL)
-    r = session.get(DETAIL_SCHEDULE_URL.format(period=period))
+    req = requests.Session()
+    r = req.post(AUTH_URL, data={'u': username,
+                                 'p': password}, verify=False)
+    r = req.get(CHANGEROLE_URL)
+    r = req.get(DETAIL_SCHEDULE_URL.format(period=period))
     courses = create_courses(r.text, is_detail=True)
     print("===============================")
     print("this is r.text:")

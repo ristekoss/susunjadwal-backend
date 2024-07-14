@@ -1,12 +1,12 @@
-version: "3.9"
+version: "3.7"
 
 services:
   rmq:
     image: rabbitmq:management-alpine
     restart: unless-stopped
     ports:
-      - 15671-15672:15671-15672
-      - 5671-5672:5671-5672
+      - "15671-15672:15671-15672"
+      - "5672:5672"
 
   mongo:
     image: mongo:7

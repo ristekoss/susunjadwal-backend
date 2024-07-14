@@ -26,7 +26,7 @@ class ScheduleScrapperServices:
 
         def callback(ch, method, properties, body):
             data = json.loads(body)
-            now = datetime.datetime.utcnow() # TODO
+            now = datetime.datetime.utcnow()
             username = data['username']
             password = data['password']
             major_id = data['major_id']
@@ -80,16 +80,16 @@ class ScheduleScrapperServices:
         )
         if "Login Failed" in r.text:
             return {
-                'success': False,
-                'message': "Login gagal"
-            }, 400
+                       'success': False,
+                       'message': "Login gagal"
+                   }, 400
         if user.last_update_course_request_at:
             time_difference = now - user.last_update_course_request_at
             if time_difference.seconds < 300:
                 return {
-                    'success': False,
-                    'message': "Anda sudah melakukan permintaan sebelumnya, harap tunggu 5 menit"
-                }, 400
+                           'success': False,
+                           'message': "Anda sudah melakukan permintaan sebelumnya, harap tunggu 5 menit"
+                       }, 400
         exchange_name = get_app_config("UPDATE_COURSE_LIST_EXCHANGE_NAME")
         major: Major = user.major
         kd_org = major.kd_org
@@ -104,5 +104,5 @@ class ScheduleScrapperServices:
         user.last_update_course_request_at = now
         user.save()
         return {
-            'success': True
-        }, 200
+                   'success': True
+               }, 200

@@ -1,3 +1,4 @@
+import os
 from flask import current_app as app
 
 from app.jwt_utils import decode_token, encode_token
@@ -93,3 +94,10 @@ def process_sso_profile(sso_profile):
 
 def get_app_config(varname):
     return app.config.get(varname)
+
+
+def generate_admin_jwt():
+    token = encode_token({
+        'credentials': os.environ.get("ADMIN_CREDENTIAL_VERIFICATION")
+    })
+    return token

@@ -13,12 +13,13 @@ from app.message_queue import init_pika
 from app.services.scrapper.schedule_scrapper import ScheduleScrapperServices
 from app.views.auth import router_auth
 from app.views.main import router_main
+from app.views.review import router_review
 from app.cron import cron
 from uploader.views import router_uploader
 
 from pathlib import Path
 
-load_dotenv()
+load_dotenv(override=True)
 
 base_dir = Path(__file__).resolve().parent.parent
 
@@ -84,6 +85,7 @@ app.config.from_mapping(
 app.register_blueprint(router_auth, url_prefix=app.config["BASE_PATH"])
 app.register_blueprint(router_main, url_prefix=app.config["BASE_PATH"])
 app.register_blueprint(router_uploader, url_prefix=app.config["BASE_PATH"])
+app.register_blueprint(router_review, url_prefix=app.config["BASE_PATH"])
 app.register_blueprint(cron)
 
 CORS(app)

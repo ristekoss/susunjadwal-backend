@@ -12,6 +12,7 @@ class Review(mongo.Document):
 
     def serialize(self):
         return {
+            "id": str(self.id),
             "user_id": str(self.user.id),
             "user_name": str(self.user.name),
             "rating": self.rating,

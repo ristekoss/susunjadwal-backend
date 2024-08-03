@@ -27,3 +27,15 @@ def require_jwt_token(func):
             }), 401)
         return func(*args, **kwargs)
     return decorated_func
+
+
+def require_admin_jwt(func):
+    @functools.wraps(func)
+    def decorated_func(*args, **kwargs):
+        data = extract_header_data(request.headers)
+        if(data['credentials'] == os.environ.get("ADMIN_CREDENTIAL_VERIFICATION")):
+            return func(*args, **kwargs)
+        return (jsonify({
+            'message': 'Unauthorized access'
+        }), 403)
+    return decorated_func

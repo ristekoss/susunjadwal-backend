@@ -71,25 +71,21 @@ def admin_review_overview():
 def admin_review_list():
     try:
         page = int(request.args.get('page', 1))
+        if page <= 0:
+            raise ValueError
     except ValueError:
         return (jsonify({
-            'message': 'Invalid page number.'
+            'message': 'Invalid page number. page must be a positive integer'
         }), 400)
-
-    if page <= 0:
-        return (jsonify({
-            'message': 'Page must be a positive integer.'
-        }), 400)
-
-    data = request.json if request.json else {}
-    per_page = data.get('per_page', 10)
-
+    
     try:
-        per_page = int(per_page)
+        per_page = int(request.args.get('per_page', 10))
         if per_page <= 0:
             raise ValueError
     except ValueError:
-        return jsonify({'message': 'per_page must be a positive integer.'}), 400
+        return (jsonify({
+            'message': 'per_page must be a positive integer.'
+        }))
 
     skip = (page - 1) * per_page
 

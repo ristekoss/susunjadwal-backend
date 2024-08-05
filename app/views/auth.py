@@ -7,7 +7,7 @@ from flask import (
 
 from app.exceptions.auth import UserNotFound, KdOrgNotFound
 from app.services.auth.auth import AuthServices, AuthCompletionData
-from app.utils import process_sso_profile, get_app_config
+from app.utils import process_sso_profile, get_app_config, extract_header_data
 from sso.utils import (
     authenticate,
     get_cas_client,
@@ -71,3 +71,18 @@ def list_majors(faculty_idx):
         return jsonify(faculty_majors), 200
     except IndexError:
         return jsonify(), 400
+    
+
+@router_auth.route("/auth/me", methods=["GET"])
+def validate_jwt():
+    data = extract_header_data(request.headers)
+    if data is None:
+        return (jsonify({
+            'message': 'There is no token/token is not valid',
+            'token_is_valid': False
+        }), 401)
+
+    return jsonify({
+        'message': 'token is valid',
+        'token_is_valid': True
+    })

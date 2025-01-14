@@ -15,8 +15,10 @@ from app.views.auth import router_auth
 from app.views.main import router_main
 from app.views.review import router_review
 from app.views.admin import router_admin
-from app.cron import cron
 from uploader.views import router_uploader
+
+## currently disabled because of issue on 2024-01-14
+# from app.cron import cron
 
 from pathlib import Path
 
@@ -88,7 +90,9 @@ app.register_blueprint(router_main, url_prefix=app.config["BASE_PATH"])
 app.register_blueprint(router_uploader, url_prefix=app.config["BASE_PATH"])
 app.register_blueprint(router_review, url_prefix=app.config["BASE_PATH"])
 app.register_blueprint(router_admin, url_prefix=app.config["BASE_PATH"])
-app.register_blueprint(cron)
+
+## currently disabled because of issue on 2024-01-14
+# app.register_blueprint(cron)
 
 CORS(app)
 MongoEngine(app)

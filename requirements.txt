@@ -1,5 +1,5 @@
 beautifulsoup4==4.12.3
-certifi==2025.7.14
+certifi==2025.4.26
 chardet==3.0.4
 charset-normalizer==3.4.2
 click==8.0.1

@@ -21,7 +21,7 @@ pymongo==3.11.4
 python-cas==1.4.0
 python-dotenv==0.18.0
 pytz==2021.1
-requests==2.32.0
+requests==2.27.1
 six==1.16.0
 soupsieve==2.5
 typing-extensions==4.12.2

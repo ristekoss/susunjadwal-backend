@@ -49,8 +49,12 @@ def scrape_siak_ng():
                     result_data = json.loads(data_line)
                     courses_data = result_data.get('courses')
                     period_name = result_data.get('period_name')
-                    target_period = result_data.get('period')
-                except (IndexError, json.JSONDecodeError):
+                    target_period = result_data.get('period') 
+                except (IndexError, json.JSONDecodeError) as e:
+                    yield format_sse({
+                        "type": "error", 
+                        "message": f"Error parsing scraper result: {str(e)}"
+                    }, event='log')
                     pass
             
             yield event
@@ -63,14 +67,11 @@ def scrape_siak_ng():
                     "message": "Saving courses to database..."
                 }, event='log')
                 
-                # Get or create major for this user
                 major = Major.objects(kd_org=user_obj.major.kd_org).first()
                 if not major:
-                    # Create new major if it doesn't exist
                     major = Major(kd_org=user_obj.major.kd_org, name=f"Major-{user_obj.major.kd_org}")
                     major.save()
                 
-                # Save courses to period
                 period_instance = Period.objects(
                     major_id=major.id,
                     name=target_period,
@@ -78,15 +79,13 @@ def scrape_siak_ng():
                 ).first()
                 
                 if period_instance:
-                    # Update existing period
-                    period_instance.courses = []  # Clear existing courses
+                    period_instance.courses = []
                     period_instance.save()
                     yield format_sse({
                         "type": "status", 
                         "message": "Updated existing period with new courses."
                     }, event='log')
                 else:
-                    # Create new period
                     period_instance = Period(
                         major_id=major.id,
                         name=target_period,
@@ -99,61 +98,59 @@ def scrape_siak_ng():
                         "message": "Created new period for courses."
                     }, event='log')
                 
-                # Convert and save courses to proper Course model format
                 converted_courses = []
                 for course_data in courses_data:
                     try:
-                        # Convert classes
                         classes = []
                         for class_data in course_data.get('classes', []):
-                            # Parse schedule items from schedule string
                             schedule_items = []
-                            schedule_text = class_data.get('schedule', '')
-                            rooms_text = class_data.get('rooms', '')
-                            
-                            # Split schedule and rooms by newlines
-                            schedule_lines = schedule_text.split('\n') if schedule_text else []
-                            room_lines = rooms_text.split('\n') if rooms_text else []
-                            
-                            for i, schedule_line in enumerate(schedule_lines):
-                                if schedule_line.strip():
-                                    # Parse day and time from format like "Selasa, 10.00-11.40"
-                                    match = re.match(r'(\w+),\s*(\d{2}\.\d{2})-(\d{2}\.\d{2})', schedule_line.strip())
-                                    if match:
-                                        day, start_time, end_time = match.groups()
-                                        room = room_lines[i].strip() if i < len(room_lines) else ""
-                                        
-                                        schedule_item = ScheduleItem(
-                                            day=day,
-                                            start=start_time,
-                                            end=end_time,
-                                            room=room
-                                        )
-                                        schedule_items.append(schedule_item)
-                            
-                            # Parse lecturers
                             lecturers = []
-                            lecturers_text = class_data.get('lecturers', '')
-                            if lecturers_text:
-                                for lecturer in lecturers_text.split('\n'):
-                                    lecturer = lecturer.strip()
-                                    if lecturer and lecturer.startswith('-'):
-                                        lecturers.append(lecturer[1:].strip())
-                            
+                            class_name = class_data.get('class_name') or class_data.get('name', '')
+
+                            # Check if data is already structured
+                            if 'schedule_items' in class_data:
+                                for item in class_data.get('schedule_items', []):
+                                    schedule_items.append(ScheduleItem(
+                                        day=item.get('day'),
+                                        start=item.get('start'),
+                                        end=item.get('end'),
+                                        room=item.get('room')
+                                    ))
+                                lecturers = class_data.get('lecturer', [])
+                            # Fallback to parsing raw strings
+                            else:
+                                schedule_text = class_data.get('schedule', '')
+                                rooms_text = class_data.get('rooms', '')
+                                schedule_lines = schedule_text.split('\n') if schedule_text else []
+                                room_lines = rooms_text.split('\n') if rooms_text else []
+                                
+                                for i, schedule_line in enumerate(schedule_lines):
+                                    if schedule_line.strip():
+                                        match = re.match(r'(\w+),\s*([\d\.]+)-([\d\.]+)', schedule_line.strip())
+                                        if match:
+                                            day, start_time, end_time = match.groups()
+                                            room = room_lines[i].strip() if i < len(room_lines) else ""
+                                            schedule_items.append(ScheduleItem(
+                                                day=day, start=start_time, end=end_time, room=room
+                                            ))
+                                
+                                lecturers_text = class_data.get('lecturers', '')
+                                if lecturers_text:
+                                    lecturers = [lect.strip().lstrip('- ') for lect in lecturers_text.split('\n') if lect.strip()]
+
                             class_obj = Class(
-                                name=class_data.get('class_name', ''),
+                                name=class_name,
                                 schedule_items=schedule_items,
                                 lecturer=lecturers
                             )
                             classes.append(class_obj)
                         
-                        # Create course object
                         course = Course(
                             course_code=course_data.get('course_code', ''),
                             curriculum=course_data.get('curriculum', ''),
                             name=course_data.get('name', ''),
-                            description='',  # Will be populated later if needed
-                            prerequisite='',  # Will be populated later if needed
+                            description='',
+                            prerequisite='',
                             credit=int(course_data.get('credit', 0)),
                             term=int(course_data.get('term', 0)),
                             classes=classes
@@ -167,7 +164,6 @@ def scrape_siak_ng():
                         }, event='log')
                         continue
                 
-                # Save courses to period
                 period_instance.courses = converted_courses
                 period_instance.save()
                 

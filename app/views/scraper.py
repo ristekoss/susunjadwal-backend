@@ -7,6 +7,7 @@ from models.period import Period, Course, Class, ScheduleItem
 from scraper.siak_ng_scraper import scrape_siak_ng_courses, format_sse
 import json
 import re
+import datetime
 
 router_scraper = Blueprint('router_scraper', __name__)
 
@@ -165,6 +166,7 @@ def scrape_siak_ng():
                         continue
                 
                 period_instance.courses = converted_courses
+                period_instance.last_update_at = datetime.utcnow()
                 period_instance.save()
                 
                 yield format_sse({

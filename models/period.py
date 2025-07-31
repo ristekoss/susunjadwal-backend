@@ -86,7 +86,7 @@ class Period(mongo.Document):
 
     def serialize(self):
         return {
-            "last_update_at": self.last_update_at.isoformat() + "Z",
+            "last_update_at": self.last_update_at.isoformat() + "Z" if self.last_update_at else None,
             "name": self.name,
             "is_detail": self.is_detail,
             "courses": self.__get_courses(),

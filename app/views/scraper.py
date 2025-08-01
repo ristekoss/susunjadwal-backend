@@ -166,7 +166,7 @@ def scrape_siak_ng():
                         continue
                 
                 period_instance.courses = converted_courses
-                period_instance.last_update_at = datetime.utcnow()
+                period_instance.last_update_at = datetime.now(datetime.timezone.utc)
                 period_instance.save()
                 
                 yield format_sse({

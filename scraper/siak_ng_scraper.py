@@ -31,8 +31,8 @@ class TLSAdapter(requests.adapters.HTTPAdapter):
 
 
 def pre_request():
-    """The server needs at least 0.8 second delay between requests"""
-    delay_time = 0.8
+    """The server needs at least 1.2 second delay between requests"""
+    delay_time = 2 # up to 2 seconds
     time.sleep(delay_time)
 
 

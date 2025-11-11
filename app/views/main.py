@@ -211,6 +211,24 @@ def get_all_courses_by_major(major_id):
         'courses': all_courses
     }), 200)
 
+"""
+Provides all existing courses, filtered by major KD ORG
+regardless active term/period
+"""
+@router_main.route("/majors/kd/<major_kd_org>/all_courses", methods=["GET"])
+def get_all_courses_by_kd_org(major_kd_org):
+    major = Major.objects(kd_org=major_kd_org).first()
+    if (
+        major is None
+    ):  # there is still no user from desired major that already use update matkul
+        return ({}, 200)
+    periods = Period.objects(major_id=major.id).all()
+    all_courses = []
+    for period in periods:
+        for course in period.courses:
+            all_courses.append(course.serialize_ulas_kelas())
+    return (jsonify({"courses": all_courses}), 200)
+
 '''
 Provides all existing courses
 regardless of major or active term/period

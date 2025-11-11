@@ -215,7 +215,7 @@ def get_all_courses_by_major(major_id):
 Provides all existing courses, filtered by major KD ORG
 regardless active term/period
 """
-@router_main.route("/majors/<major_kd_org>/all_courses", methods=["GET"])
+@router_main.route("/majors/kd/<major_kd_org>/all_courses", methods=["GET"])
 def get_all_courses_by_kd_org(major_kd_org):
     major = Major.objects(kd_org=major_kd_org).first()
     if (

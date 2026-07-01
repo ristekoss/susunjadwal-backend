@@ -1,3 +1,5 @@
 #!/usr/bin/env sh
 
-gunicorn --bind :"$PORT" app:app
+set -eu
+
+exec gunicorn --bind :"$PORT" app:app

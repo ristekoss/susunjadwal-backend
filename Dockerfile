@@ -1,20 +1,44 @@
-FROM python:3.12-alpine
+FROM python:3.12-alpine AS builder
 
 WORKDIR /opt/app
 
-ENV APP_ENV="container"
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-COPY . .
+RUN apk add --no-cache --virtual .build-deps \
+        gcc \
+        musl-dev \
+        libxml2-dev \
+        libxslt-dev
+
+COPY requirements.txt .
+
+RUN python -m pip install --upgrade pip wheel \
+    && python -m pip install --no-cache-dir --prefix=/install -r requirements.txt
+
+
+FROM python:3.12-alpine AS runtime
+
+WORKDIR /opt/app
+
+ENV APP_ENV=container \
+    PORT=8006 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+RUN apk add --no-cache tzdata libxml2 libxslt
+
+COPY --from=builder /install /usr/local
 
 COPY scripts/launch.sh /opt/app/launch.sh
-COPY sso/additional-info.json /opt/app/sso/additional-info.json
-COPY sso/faculty-base-additional-info.json /opt/app/sso/faculty-base-additional-info.json
-COPY sso/faculty_exchange_route.json /opt/app/sso/faculty_exchange_route.json
+COPY app /opt/app/app
+COPY models /opt/app/models
+COPY scraper /opt/app/scraper
+COPY uploader /opt/app/uploader
+COPY widgets /opt/app/widgets
+COPY sso /opt/app/sso
+COPY cron.sh /opt/app/cron.sh
 
-RUN apk add -u --no-cache tzdata gcc musl-dev libxml2 libxslt-dev
-RUN pip install wheel
-RUN pip install -r requirements.txt
+RUN chmod +x /opt/app/launch.sh
 
-ENV PORT=8006
-
-ENTRYPOINT ["/bin/sh","launch.sh"]
+ENTRYPOINT ["/opt/app/launch.sh"]

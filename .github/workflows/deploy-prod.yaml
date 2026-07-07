@@ -2,6 +2,9 @@ name: Deploy (Production)
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - master
 
 jobs:
   deploy_service:
@@ -17,4 +20,3 @@ jobs:
     secrets:
       GH_TOKEN: ${{ secrets.CENTRAL_INFRA_GH_TOKEN }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-

@@ -24,6 +24,7 @@ pytz==2021.1
 requests==2.32.4
 six==1.16.0
 soupsieve==2.7
+setuptools
 typing-extensions==4.14.1
 urllib3==2.5.0
 Werkzeug==2.0.1

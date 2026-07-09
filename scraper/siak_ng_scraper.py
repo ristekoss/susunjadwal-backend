@@ -126,6 +126,10 @@ def extract_courses(html_content):
         try:
             course_name = header.strong.text.strip()
 
+            # Separate by category
+            category_h3 = header.find_previous('h3')
+            category = re.sub(r'\[\s*top\s*\]', '', category_h3.text).strip() if category_h3 else 'N/A'
+
             # Use regex to find the SKS and Term
             sks_term_match = re.search(r'(\d+)\s*SKS,\s*Term\s*(\d+)', header.text)
             credit, term = sks_term_match.groups() if sks_term_match else ('N/A', 'N/A')
@@ -139,6 +143,7 @@ def extract_courses(html_content):
 
             course_data = {
                 "name": course_name,
+                "category": category,
                 "credit": credit,
                 "term": term,
                 "course_code": course_code,

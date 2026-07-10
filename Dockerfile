@@ -12,7 +12,8 @@ COPY sso/faculty-base-additional-info.json /opt/app/sso/faculty-base-additional-
 COPY sso/faculty_exchange_route.json /opt/app/sso/faculty_exchange_route.json
 
 RUN apk add -u --no-cache tzdata gcc musl-dev libxml2 libxslt-dev
-RUN pip install wheel
+
+RUN pip install --upgrade pip setuptools wheel
 RUN pip install -r requirements.txt
 
 ENV PORT=8006

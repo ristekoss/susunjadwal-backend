@@ -150,6 +150,7 @@ def scrape_siak_ng():
                             course_code=course_data.get('course_code', ''),
                             curriculum=course_data.get('curriculum', ''),
                             name=course_data.get('name', ''),
+                            category=course_data.get('category', ''),
                             description='',
                             prerequisite='',
                             credit=int(course_data.get('credit', 0)),

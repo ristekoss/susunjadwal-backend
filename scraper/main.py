@@ -12,6 +12,11 @@ from models.period import (
     Period,
     ScheduleItem
 )
+from scraper.slcm_scraper import (
+    login_slcm,
+    parse_slcm_courses,
+    build_course_objects,
+)
 
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -25,47 +30,50 @@ GENERAL_SCHEDULE_URL = f"{BASE_URL}/Schedule/IndexOthers?fac={{fac}}&org={{org}}
 DETAIL_COURSES_URL = f"{BASE_URL}/Course/Detail?course={{course}}&curr={{curr}}"
 DEFAULT_CREDENTIAL = "01.00.12.01"
 
+def _parse_period(period):
+    if not period:
+        return None, None
+    period = period.replace("-", "/")
+    if "/" in period:
+        parts = period.split("/")
+        return parts[0], parts[1]
+    return None, None
+
+
 def scrape_courses_with_credentials(period, username, password):
     req = requests.Session()
-    r = req.post(AUTH_URL, data={'u': username,
-                                 'p': password}, verify=False)
-    r = req.get(CHANGEROLE_URL)
-    r = req.get(DETAIL_SCHEDULE_URL.format(period=period))
-    courses = create_courses(r.text, is_detail=True)
-    print("===============================")
-    print("this is r.text:")
-    print(r.text)
-    counter=0
-    for course in courses:
-        print("course", counter, "of", len(courses))
-        print(course.serialize())
-        print("===============================")
-        counter+=1
-    return courses
+    try:
+        year, term = _parse_period(period)
+        html = login_slcm(req, username, password, year=year, term=term)
+        courses = build_course_objects(parse_slcm_courses(html))
+        return courses
+    except Exception:
+        return []
 
     
 def scrape_courses(major_kd_org, period, skip_not_detail=False):
     username, password = fetch_credential(major_kd_org)
     if (username is not None) and (password is not None):
         req = requests.Session()
-        r = req.post(AUTH_URL, data={'u': username,
-                                     'p': password}, verify=False)
-        r = req.get(CHANGEROLE_URL)
-        r = req.get(DETAIL_SCHEDULE_URL.format(period=period))
-        courses = create_courses(r.text, is_detail=True)
-        return courses, True
+        try:
+            year, term = _parse_period(period)
+            html = login_slcm(req, username, password, year=year, term=term)
+            courses = build_course_objects(parse_slcm_courses(html))
+            return courses, True
+        except Exception:
+            return [], True
 
     if not skip_not_detail:
         username, password = fetch_credential(DEFAULT_CREDENTIAL)
-        fac, org = parse_kd_org(major_kd_org)
-        req = requests.Session()
-        r = req.post(AUTH_URL, data={'u': username,
-                                     'p': password}, verify=False)
-        r = req.get(CHANGEROLE_URL)
-        r = req.get(GENERAL_SCHEDULE_URL.format(
-            fac=fac, org=org, period=period))
-        courses = create_courses(r.text)
-        return courses, False
+        if username is not None and password is not None:
+            req = requests.Session()
+            try:
+                year, term = _parse_period(period)
+                html = login_slcm(req, username, password, year=year, term=term)
+                courses = build_course_objects(parse_slcm_courses(html))
+                return courses, False
+            except Exception:
+                return [], False
 
     return None, None
 
@@ -87,13 +95,22 @@ def parse_kd_org(kd_org):
 def get_period_and_kd_org(html):
     try:
         soup = BeautifulSoup(html, 'html.parser')
+        period = None
+        kd_org = None
+
+        selected_option = soup.find('option', selected=True)
+        if selected_option and selected_option.get('value'):
+            period = selected_option['value']
+
+        if not period:
+            selection = soup.find('div', class_='v-select__selection')
+            if selection:
+                period = selection.text.strip()
 
         item = soup.find(class_="linfo", style="border-left:0")
-        m = re.search(r"\((\d\d.\d\d.\d\d.\d\d)\)", item.text)
-        kd_org = m[1]
-
-        item = soup.find('option', selected=True)
-        period = item["value"]
+        if item:
+            m = re.search(r"\((\d\d\.\d\d\.\d\d\.\d\d)\)", item.text)
+            kd_org = m[1] if m else None
 
         return period, kd_org
 
@@ -103,41 +120,46 @@ def get_period_and_kd_org(html):
     return None, None
 
 def generate_desc_prerequisite(period, username, password):
-    req = requests.Session()
-    r = req.post(AUTH_URL, data={'u': username,
-                                    'p': password}, verify=False)
-    r = req.get(CHANGEROLE_URL)
-    for course in period.courses:
-        code = course.course_code
-        curr = course.curriculum
-        if code == "" or curr == "":
-            course.description = ""
-            course.prerequisite = ""
-            continue
-        r = req.get(DETAIL_COURSES_URL.format(course=code, curr=curr)).text
-        soup = BeautifulSoup(r, 'html.parser')
-        for textarea in soup.findAll('textarea'):
-            if textarea.contents:
-                textarea_content = textarea.contents[0]
-                desc = textarea_content.replace('\r\n', ' ')
-                if len(desc) > 2048:
-                    desc = ""
-            else:
-                desc = ""
-            break
-        components = soup.find(text="Prasyarat Mata Kuliah").parent.findNextSibling('td').contents
-        prerequisites = ""
-        if len(components) > 1:
-            components = components[1].find_all('tr')
+    # req = requests.Session()
+    # r = req.post(AUTH_URL, data={'u': username,
+    #                                 'p': password}, verify=False)
+    # r = req.get(CHANGEROLE_URL)
+    # for course in period.courses:
+    #     code = course.course_code
+    #     curr = course.curriculum
+    #     if code == "" or curr == "":
+    #         course.description = ""
+    #         course.prerequisite = ""
+    #         continue
+    #     r = req.get(DETAIL_COURSES_URL.format(course=code, curr=curr)).text
+    #     soup = BeautifulSoup(r, 'html.parser')
+    #     for textarea in soup.findAll('textarea'):
+    #         if textarea.contents:
+    #             textarea_content = textarea.contents[0]
+    #             desc = textarea_content.replace('\r\n', ' ')
+    #             if len(desc) > 2048:
+    #                 desc = ""
+    #         else:
+    #             desc = ""
+    #         break
+    #     components = soup.find(text="Prasyarat Mata Kuliah").parent.findNextSibling('td').contents
+    #     prerequisites = ""
+    #     if len(components) > 1:
+    #         components = components[1].find_all('tr')
             
-            for component in components:
-                p = re.search('([A-Z]{4}[0-9]{6})', component.text)
-                if p:
-                    component_course_name = component.find_all('td')[2]
-                    prerequisites += component_course_name.text.strip() + ","
-        course.description = desc
-        course.prerequisite = prerequisites[:-1]
-    period.save()
+    #         for component in components:
+    #             p = re.search('([A-Z]{4}[0-9]{6})', component.text)
+    #             if p:
+    #                 component_course_name = component.find_all('td')[2]
+    #                 prerequisites += component_course_name.text.strip() + ","
+    #     course.description = desc
+    #     course.prerequisite = prerequisites[:-1]
+    # period.save()
+    
+    # After migrating to the new SLCM schedule site, legacy detail page scraping
+    # is no longer supported in this module. Keep this function as a safe no-op
+    # so the backend continues to store schedule data without raising errors.
+    return
 
 def create_courses(html, is_detail=False):
     soup = BeautifulSoup(html, 'html.parser')

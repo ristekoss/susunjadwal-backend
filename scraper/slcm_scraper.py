@@ -38,8 +38,8 @@ def login_slcm(session, username, password, whole=False, year=None, term=None):
         year: academic year (e.g. "2026"). If None, determined from page/env.
         term: term number (e.g. "1"). If None, determined from page/env.
 
-    Returns JSON string from the API response (using type=group for all courses),
-    or HTML string fallback.
+    Returns JSON string from the API response (all class categories:
+    internal, group, external), or HTML string fallback.
     """
     target_url = SCHEDULE_WHOLE_PAGE_URL if whole else SCHEDULE_PAGE_URL
     playwright_result = render_with_playwright(target_url, username, password, year=year, term=term)
@@ -170,13 +170,19 @@ def _parse_v1_api_response(data):
             item.get("semester") or
             0
         )
+        category = (
+            item.get("category") or
+            item.get("kategori") or
+            ""
+        )
 
-        if course_code not in courses_map:
-            courses_map[course_code] = {
+        course_key = (course_code, category)
+        if course_key not in courses_map:
+            courses_map[course_key] = {
                 "course_code": course_code,
                 "curriculum": curriculum,
                 "name": course_name,
-                "category": item.get("category") or item.get("kategori") or "",
+                "category": category,
                 "credit": int(credit) if isinstance(credit, (int, float)) else 0,
                 "term": int(term) if isinstance(term, (int, float)) else 0,
                 "classes": [],
@@ -284,9 +290,9 @@ def _parse_v1_api_response(data):
         if lecturer_list and lecturer_list[0].startswith("[") and lecturer_list[0].endswith("]"):
             lecturer_list = []
 
-        existing_class_names = {c["name"] for c in courses_map[course_code]["classes"]}
-        if class_name not in existing_class_names or True:
-            courses_map[course_code]["classes"].append({
+        existing_class_names = {c["name"] for c in courses_map[course_key]["classes"]}
+        if class_name not in existing_class_names:
+            courses_map[course_key]["classes"].append({
                 "name": class_name,
                 "schedule_items": schedule_items,
                 "lecturer": [l for l in lecturer_list if l and l != class_name],

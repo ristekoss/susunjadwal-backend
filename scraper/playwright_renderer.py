@@ -22,8 +22,8 @@ def render_with_playwright(url: str, username: str, password: str,
       2. Fill the Keycloak login form and submit
       3. Wait for redirect back to the SLCM Nuxt app
       4. Extract Bearer token from API request headers and x-app-token from localStorage
-      5. Call /class/table with type=group (returns ALL courses for the user's org)
-      6. Return the JSON data as a string
+      5. Call /class/table for each class category (type=internal, type=group, type=external)
+      6. Merge all responses and return the combined JSON data as a string
 
     Returns JSON string on success, or None on failure / missing Playwright.
     """
@@ -151,31 +151,58 @@ def render_with_playwright(url: str, username: str, password: str,
                 if not term:
                     term = "1"
 
-                # Build the API URL with type=group (returns all courses)
-                api_url = f"/akademik/api/v1/class/table?type=group&lang=id&year={year}&term={term}"
+                # Fetch every class category so internal, external, and joint
+                # ("bersama") courses are all captured, not just type=group.
+                # Categories match what the frontend renders (Kelas Internal /
+                # Kelas External / Kelas Bersama).
+                class_types = [
+                    ("internal", "Kelas Internal"),
+                    ("group", "Kelas Bersama"),
+                    ("external", "Kelas External"),
+                ]
 
-                result_json = page.evaluate("""
-                    async (params) => {
-                        try {
-                            const resp = await fetch(params.url, {
-                                headers: {
-                                    'Authorization': params.auth,
-                                    'x-app-token': params.xapp,
-                                    'Content-Type': 'application/json'
-                                }
-                            });
-                            if (!resp.ok) return JSON.stringify({error: 'HTTP ' + resp.status});
-                            const data = await resp.json();
-                            return JSON.stringify(data);
-                        } catch(e) {
-                            return JSON.stringify({error: e.message});
+                merged_items = []
+                merged_success = False
+                for type_key, category in class_types:
+                    api_url = f"/akademik/api/v1/class/table?type={type_key}&lang=id&year={year}&term={term}"
+
+                    result_json = page.evaluate("""
+                        async (params) => {
+                            try {
+                                const resp = await fetch(params.url, {
+                                    headers: {
+                                        'Authorization': params.auth,
+                                        'x-app-token': params.xapp,
+                                        'Content-Type': 'application/json'
+                                    }
+                                });
+                                if (!resp.ok) return JSON.stringify({error: 'HTTP ' + resp.status});
+                                const data = await resp.json();
+                                return JSON.stringify(data);
+                            } catch(e) {
+                                return JSON.stringify({error: e.message});
+                            }
                         }
-                    }
-                """, {"url": api_url, "auth": auth_token, "xapp": xapp_token})
+                    """, {"url": api_url, "auth": auth_token, "xapp": xapp_token})
 
-                result_data = json.loads(result_json)
-                if "error" not in result_data:
-                    out_str = json.dumps(result_data, ensure_ascii=False)
+                    result_data = json.loads(result_json)
+                    if "error" in result_data:
+                        continue
+
+                    merged_success = True
+                    items = result_data.get("data") or []
+                    if not isinstance(items, list):
+                        items = []
+                    for item in items:
+                        if isinstance(item, dict):
+                            item["category"] = category
+                            merged_items.append(item)
+
+                if merged_success:
+                    out_str = json.dumps(
+                        {"data": merged_items, "message": "Table Class is successfuly!"},
+                        ensure_ascii=False,
+                    )
 
                     try:
                         save_dir = os.path.dirname(os.path.abspath(__file__))

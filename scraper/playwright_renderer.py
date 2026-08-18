@@ -41,6 +41,11 @@ def render_with_playwright(url: str, username: str, password: str,
                 locale="id-ID",
             )
             page = context.new_page()
+            
+            page.route(
+                "**/*.{png,jpg,jpeg,gif,svg,css,woff,woff2,ttf,otf}",
+                lambda route: route.abort()
+            )
 
             captured = {"auth": None, "year": None, "term": None}
 

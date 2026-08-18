@@ -69,7 +69,8 @@ class Course(mongo.EmbeddedDocument):
             "curriculum": self.curriculum,
             "description": self.description,
             "prerequisite": self.prerequisite,
-            "term": self.term
+            "term": self.term,
+            "category": self.category
         }
 
 class Period(mongo.Document):

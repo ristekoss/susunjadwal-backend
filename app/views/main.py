@@ -12,7 +12,7 @@ from models.period import Period
 from models.user import User
 from models.major import Major
 from models.user_schedule import UserSchedule
-from app.utils import get_user_id, get_app_config
+from app.utils import get_user_id, get_app_config, filter_courses_data
 
 router_main = Blueprint('router_sunjad', __name__)
 
@@ -52,7 +52,19 @@ def get_courses_by_kd(major_kd_org):
     if period is None: # if still not exist, user from the desired major must scrape the course first
         return ({}, 200)
 
-    return (jsonify(period.serialize()), 200)
+    if not request.args:
+        return (jsonify(period.serialize()), 200)
+
+    filtered_courses = filter_courses_data(period.courses, request.args)
+    
+    response_data = {
+        "last_update_at": period.last_update_at.isoformat() + "Z" if period.last_update_at else None,
+        "name": period.name,
+        "is_detail": period.is_detail,
+        "courses": filtered_courses
+    }
+
+    return (jsonify(response_data), 200)
 
 '''
 Provides course list filtered by major ID.

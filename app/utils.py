@@ -181,6 +181,7 @@ def __match_course_query(course, course_queries: list[str], is_fuzzy: bool = Fal
 
     return False
 
+
 def __match_sks(course, sks: int | None, sks_op: str) -> bool:
     if sks is None:
         return True

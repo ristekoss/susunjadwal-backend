@@ -171,6 +171,15 @@ def rename_user_schedule(user_id, user_schedule_id):
 @require_jwt_token
 @require_same_user_id
 def edit_user_schedule(user_id, user_schedule_id):
+    data = request.json
+    schedule_items = data.get('schedule_items', [])
+
+    for item in schedule_items:
+        if not item.get('name') or not item.get('day') or not item.get('start') or not item.get('end'):
+            return (jsonify({
+                'message': 'Nama Jadwal dan Waktu Jadwal wajib diisi.'
+            }), 400)
+
     active_period = get_app_config("ACTIVE_PERIOD")
     user_schedule = UserSchedule.objects(id=user_schedule_id).first()
     # If the schedule doesn't exist or the user is mismatched,
@@ -180,9 +189,8 @@ def edit_user_schedule(user_id, user_schedule_id):
     elif str(user_schedule.user_id.id) != user_id:
         name = f'{user_schedule.name} (copied)'
         user_schedule = UserSchedule(user_id=user_id, name=name, period=active_period)
-    data = request.json
     user_schedule.clear_schedule_item()
-    for editedScheduleItem in data['schedule_items']:
+    for editedScheduleItem in schedule_items:
         user_schedule.add_schedule_item(**editedScheduleItem)
     user_schedule.save()
 
